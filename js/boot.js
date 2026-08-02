@@ -127,6 +127,16 @@ function bindEvents() {
   // 配色输入框回车
   $('#accent-input').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applyAccentInput(); } });
 
+  // 自定义色块：右键删除
+  $('#color-swatches').addEventListener('contextmenu', e => {
+    const sw = e.target.closest('.swatch');
+    if (!sw || !sw.dataset.custom) return;
+    e.preventDefault();
+    const hex = sw.dataset.accent;
+    removeCustomColor(hex);
+    showToast('已删除 ' + hex);
+  });
+
   // 快捷键
   document.addEventListener('keydown', e => {
     const mod = e.ctrlKey || e.metaKey;
@@ -163,12 +173,19 @@ function getCustomColors() {
 function saveCustomColors(arr) {
   try { localStorage.setItem('easy_cv.custom_colors', JSON.stringify(arr)); } catch (e) { /* 忽略 */ }
 }
-function swatchHTML(hex) {
-  return '<button class="swatch" data-act="accent-pick" data-accent="' + hex + '" style="background:' + hex + '" title="' + hex + '"></button>';
+function swatchHTML(hex, isCustom) {
+  return '<button class="swatch' + (isCustom ? ' custom' : '') + '" data-act="accent-pick" data-accent="' + hex + '" style="background:' + hex + '" title="' + hex + (isCustom ? '（右键删除）' : '') + '"></button>';
 }
 function buildColorMenu() {
-  const hexes = ACCENT_PRESETS.map(p => p.hex).concat(getCustomColors());
-  $('#color-swatches').innerHTML = hexes.map(swatchHTML).join('');
+  const presets = ACCENT_PRESETS.map(p => p.hex);
+  const custom = getCustomColors();
+  $('#color-swatches').innerHTML = presets.map(h => swatchHTML(h, false)).join('') + custom.map(h => swatchHTML(h, true)).join('');
+}
+function removeCustomColor(hex) {
+  const custom = getCustomColors().filter(c => c !== hex);
+  saveCustomColors(custom);
+  buildColorMenu();
+  syncAccentUI();
 }
 function syncAccentUI() {
   const cur = normalizeAccent(store.state.accent);

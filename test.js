@@ -112,6 +112,12 @@ const tests = `
   assert(isValidHex(randomAccent()) && isValidHex(randomAccent()), '随机配色是合法 hex');
   store.setAccent('#1f3864');
 
+  // 5c. 自定义色块：添加 / 右键删除
+  saveCustomColors(['#123456']);
+  assert(getCustomColors().includes('#123456'), '自定义色保存');
+  removeCustomColor('#123456');
+  assert(!getCustomColors().includes('#123456'), '自定义色右键删除');
+
   // 6. 数据不被 localStorage 污染
   assert(store.state.blocks.every(b => b.id && b.type), '所有块有 id 和 type');
 
