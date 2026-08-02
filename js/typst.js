@@ -122,11 +122,11 @@ function renderTypst(b, ctx) {
   }
 }
 
-/* ---- 生成完整 .typ 源码 ---- */
-function typstDoc(state) {
+/* ---- 生成完整 .typ 源码（opts.font 可覆盖字体，用于 WASM 编译时指定已加载字体） ---- */
+function typstDoc(state, opts) {
   const theme = THEMES[state.theme] ? state.theme : 'classic';
   const accent = normalizeAccent(state.accent);
-  const font = TYPST_FONTS[theme] || TYPST_FONTS.classic;
+  const font = (opts && opts.font) || (TYPST_FONTS[theme] || TYPST_FONTS.classic);
   const fmt = (state.meta && state.meta.dateFormat) || 'MMM YYYY';
   const ctx = {
     esc: escTypst,
@@ -153,13 +153,35 @@ function downloadTypstSource() {
   showToast('已下载 easy-cv.typ（可用 typst CLI 或 typst.app/playground 编译）');
 }
 async function exportTypstPDF() {
-  const src = typstDoc(store.state);
+  // WASM 编译器不自带字体，用 Noto Sans（TTF，jsDelivr 带 CORS）；源码字体名匹配"Noto Sans"
+  const source = typstDoc(store.state, { font: 'Noto Sans' });
   try {
-    showToast('正在加载 Typst 编译器（首次约 28MB，联网一次）…');
+    showToast('正在加载 Typst 编译器与字体（首次约 30MB，需联网）…');
     const mod = await import('https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-web-compiler@0.7.0/+esm');
-    const compiler = await mod.TypstCompiler.create();
-    const pdf = await compiler.compile(src, { format: 'pdf' });
-    downloadBlob(new Blob([pdf], { type: 'application/pdf' }), 'easy-cv.pdf');
+    // 0) 先初始化 wasm：直接传 wasm 字节（绕开 importer 机制）
+    const wasmResp = await fetch('https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-web-compiler@0.7.0/pkg/typst_ts_web_compiler_bg.wasm');
+    if (!wasmResp.ok) throw new Error('wasm 下载失败');
+    const initFn = mod.default || mod.__wbg_init;
+    if (typeof initFn === 'function') await initFn(await wasmResp.arrayBuffer());
+    // 1) 下载字体
+    const fontResp = await fetch('https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosans/NotoSans%5Bwdth,wght%5D.ttf');
+    if (!fontResp.ok) throw new Error('字体下载失败');
+    const fontBytes = new Uint8Array(await fontResp.arrayBuffer());
+    // 2) 构建字体解析器
+    const fontBuilder = new mod.TypstFontResolverBuilder();
+    fontBuilder.add_raw_font(fontBytes);
+    const fonts = await fontBuilder.build();
+    // 3) 构建编译器并挂字体
+    const builder = new mod.TypstCompilerBuilder();
+    builder.set_dummy_access_model();
+    const compiler = await builder.build();
+    compiler.set_fonts(fonts);
+    compiler.add_source('/main.typ', source);
+    // 4) 编译成 PDF（fmt="pdf"，diagnostics_format 用 1=none）
+    const out = compiler.compile('/main.typ', [], 'pdf', 1);
+    const bytes = out && out.result ? out.result : out;
+    if (!bytes || !bytes.length) throw new Error('编译无输出（可能字体未找到）');
+    downloadBlob(new Blob([bytes], { type: 'application/pdf' }), 'easy-cv.pdf');
     showToast('已导出 Typst PDF（easy-cv.pdf）');
   } catch (e) {
     console.error(e);
