@@ -33,6 +33,7 @@ easy_cv/
 │   ├── sample.js       示例数据
 │   └── boot.js         事件绑定 + 启动
 ├── sample-cv.json      示例数据（可作导入夹具）
+├── CV_JSON_SPEC.md     JSON 字段与格式规范（供 AI / agent 阅读复用）
 ├── test.js             冒烟测试（Node：node test.js）
 └── test-checklist.md   端到端人工验证清单
 ```
@@ -48,7 +49,7 @@ easy_cv/
 
 **v2 规划**（未实现）：
 
-- 接 **DeepSeek**（OpenAI 兼容 API），用你自己的 key（设置里填，存本机浏览器 localStorage）
+- 接 **DeepSeek**（OpenAI 兼容 API），用你自己的 key（设置里填，存本机浏览器 localStorage）；让 AI 读/改 CV 的字段规范见 **`CV_JSON_SPEC.md`**（可作为 agent 的 system prompt 上下文）
 - agent 级能力：`read_cv`（读取当前 CV）→ `patch_blocks`（JSON Patch 修改块，可撤销）→ `web_search`（Tavily 联网搜索）→ `ask_user`（提问）
 - ⚠️ 注意：`file://` 下请求 API 需要服务端返回 `Access-Control-Allow-Origin: *`，接 v2 时先用 `curl` 验证 DeepSeek / Tavily 的 CORS
 
