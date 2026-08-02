@@ -27,7 +27,7 @@ const SAMPLE = {
       institution: 'Zhejiang University', degree: 'BSc', area: 'Software Engineering', location: 'Hangzhou',
       startDate: '2012-09', endDate: '2016-06', current: false, score: '', courses: [], highlights: []
     } },
-    { id: 'b_s4', type: 'experience', data: {
+    { id: 'b_s4', type: 'work', data: {
       organization: 'Alibaba Cloud', position: 'Senior Machine Learning Engineer', location: 'Hangzhou',
       startDate: '2021-07', endDate: '', current: true,
       summary: 'Leading the retrieval team for a code-assistant platform serving millions of users.',
@@ -38,7 +38,7 @@ const SAMPLE = {
       ],
       url: ''
     } },
-    { id: 'b_s5', type: 'experience', data: {
+    { id: 'b_s5', type: 'research', data: {
       organization: 'Stanford University', position: 'Research Assistant', location: 'Stanford, CA',
       startDate: '2019-06', endDate: '2020-08', current: false,
       summary: 'Worked on dense retrieval and contrastive learning with large-scale pretrained encoders.',

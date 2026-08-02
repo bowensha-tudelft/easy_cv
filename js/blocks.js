@@ -108,8 +108,8 @@ const BLOCK_TYPES = {
     ],
     renderHTML: educationRender
   },
-  experience: {
-    key: 'experience', label: '工作 / 研究经历', icon: 'briefcase', sectionTitle: 'Experience',
+  work: {
+    key: 'work', label: '工作经历', icon: 'briefcase', sectionTitle: 'Work Experience',
     defaults: () => ({ organization: '', position: '', location: '', startDate: '', endDate: '', current: false, summary: '', highlights: [], url: '' }),
     fields: [
       { key: 'position', label: '职位', type: 'text' },
@@ -118,6 +118,22 @@ const BLOCK_TYPES = {
       { key: 'startDate', label: '开始', type: 'month', inline: true },
       { key: 'endDate', label: '结束', type: 'month', inline: true },
       { key: 'current', label: '至今在职', type: 'checkbox' },
+      { key: 'url', label: '链接', type: 'url' },
+      { key: 'summary', label: '概述', type: 'textarea' },
+      { key: 'highlights', label: '职责 / 成果（每行一条）', type: 'bullets' }
+    ],
+    renderHTML: experienceRender
+  },
+  research: {
+    key: 'research', label: '研究经历', icon: 'flask', sectionTitle: 'Research Experience',
+    defaults: () => ({ organization: '', position: '', location: '', startDate: '', endDate: '', current: false, summary: '', highlights: [], url: '' }),
+    fields: [
+      { key: 'position', label: '职位 / 项目', type: 'text' },
+      { key: 'organization', label: '机构 / 实验室', type: 'text' },
+      { key: 'location', label: '地点', type: 'text' },
+      { key: 'startDate', label: '开始', type: 'month', inline: true },
+      { key: 'endDate', label: '结束', type: 'month', inline: true },
+      { key: 'current', label: '至今', type: 'checkbox' },
       { key: 'url', label: '链接', type: 'url' },
       { key: 'summary', label: '概述', type: 'textarea' },
       { key: 'highlights', label: '职责 / 成果（每行一条）', type: 'bullets' }
@@ -175,6 +191,8 @@ function blockSummary(b) {
   switch (b.type) {
     case 'header': return d.title || '';
     case 'education': return [d.degree, d.institution].filter(Boolean).join(' · ');
+    case 'work':
+    case 'research':
     case 'experience': return (d.position || '') + (d.organization ? ' @ ' + d.organization : '');
     case 'projects': return d.name || '';
     case 'skills': return d.name || '';

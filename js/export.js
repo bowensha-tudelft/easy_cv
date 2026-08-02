@@ -32,6 +32,8 @@ const JSONResume = {
             else basics.profiles.push({ network: l.label || ICON_LABELS[l.icon] || 'profile', url: l.url });
           }
           break;
+        case 'work':
+        case 'research':
         case 'experience':
           work.push({ name: d.organization, position: d.position, location: d.location, startDate: d.startDate, endDate: d.current ? null : (d.endDate || null), summary: d.summary, highlights: d.highlights, url: d.url });
           break;
@@ -63,7 +65,7 @@ const JSONResume = {
         }
       });
     }
-    for (const w of r.work || []) blocks.push({ id: uid('b'), type: 'experience', visible: true, data: { organization: w.name || '', position: w.position || '', location: w.location || '', startDate: w.startDate || '', endDate: w.endDate || '', current: !w.endDate, summary: w.summary || '', highlights: w.highlights || [], url: w.url || '' } });
+    for (const w of r.work || []) blocks.push({ id: uid('b'), type: 'work', visible: true, data: { organization: w.name || '', position: w.position || '', location: w.location || '', startDate: w.startDate || '', endDate: w.endDate || '', current: !w.endDate, summary: w.summary || '', highlights: w.highlights || [], url: w.url || '' } });
     for (const e of r.education || []) blocks.push({ id: uid('b'), type: 'education', visible: true, data: { institution: e.institution || '', location: e.location || '', degree: e.studyType || '', area: e.area || '', startDate: e.startDate || '', endDate: e.endDate || '', current: !e.endDate, score: e.score || '', courses: e.courses || [], highlights: e.highlights || [] } });
     for (const p of r.projects || []) blocks.push({ id: uid('b'), type: 'projects', visible: true, data: { name: p.name || '', url: p.url || '', description: p.description || '', startDate: p.startDate || '', endDate: p.endDate || '', current: !p.endDate, keywords: p.keywords || [], roles: p.roles || [], highlights: p.highlights || [] } });
     for (const s of r.skills || []) blocks.push({ id: uid('b'), type: 'skills', visible: true, data: { name: s.name || '', keywords: s.keywords || [], level: s.level || '', showLevel: false } });
@@ -82,6 +84,7 @@ function importJSONFile(file) {
       const obj = JSON.parse(r.result);
       const state = obj && Array.isArray(obj.blocks) ? obj : JSONResume.fromStrict(obj);
       state.blocks = state.blocks || [];
+      for (const b of state.blocks) if (b.type === 'experience') b.type = 'research';
       state.meta = state.meta || { dateFormat: 'MMM YYYY' };
       state.theme = THEMES[state.theme] ? state.theme : 'classic';
       if (!isValidHex(state.accent)) state.accent = DEFAULT_ACCENT;

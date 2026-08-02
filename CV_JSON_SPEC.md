@@ -39,7 +39,7 @@
 ```json
 {
   "id": "b_ab12cd",
-  "type": "experience",
+  "type": "work",
   "data": { },
   "visible": true,
   "collapsed": false
@@ -95,16 +95,20 @@
 | `courses` | tags | 课程列表 |
 | `highlights` | bullets | 亮点 |
 
-### 3.3 `experience` —— 工作/研究经历（小节标题 Experience）
+### 3.3 `work` / `research` —— 工作经历 / 研究经历（小节标题 Work Experience / Research Experience）
+
+`work` 用于公司/机构里的正式职位；`research` 用于研究项目/实验室经历（`position` 可填 "PhD Candidate / Research Assistant / 项目名" 等）。两者**字段完全相同**，仅小节标题不同：**Work Experience** / **Research Experience**。
+
+> 迁移：2026-08 起旧的 `experience` 类型拆分为 `work` / `research`；导入旧数据时旧 `experience` 块自动迁移为 `research`。
 
 | 字段 | 类型 | 说明 |
 |---|---|---|
-| `position` | text | 职位 |
-| `organization` | text | 公司/机构 |
+| `position` | text | 职位 / 项目 |
+| `organization` | text | 公司/机构（或实验室） |
 | `location` | text | 地点 |
 | `startDate` | month | 开始 |
 | `endDate` | month | 结束；`current=true` 时为空 |
-| `current` | checkbox | 至今在职 |
+| `current` | checkbox | 至今 |
 | `url` | text | 链接，可选 |
 | `summary` | textarea | 概述 |
 | `highlights` | bullets | 职责/成果，每项一条 |
@@ -170,7 +174,7 @@ Patch 的**路径根是应用 JSON 对象本身**，一次提交一个 patch 数
 ]
 ```
 
-示例 2 —— 给第 1 块 experience 追加一条成果：
+示例 2 —— 给第 1 块 work 追加一条成果：
 
 ```json
 [
@@ -206,7 +210,7 @@ Patch 的**路径根是应用 JSON 对象本身**，一次提交一个 patch 数
 | `header` | `name`/`title`/`email`/`phone`/`location`/`summary` → | `basics.name` / `basics.label` / `basics.email` / `basics.phone` / `basics.location.city` / `basics.summary` |
 | `header.links` | `icon == "website"` → | `basics.url` |
 | `header.links` | 其余 → | `basics.profiles[]`（`network`=label 或图标默认名，`url`） |
-| `experience` | → | `work[]`（`organization→name`，`position`，`endDate` 在 `current=true` 时为 null） |
+| `work` / `research` | → | `work[]`（`organization→name`，`position`，`endDate` 在 `current=true` 时为 null） |
 | `education` | → | `education[]`（`degree→studyType`） |
 | `projects` | → | `projects[]` |
 | `skills` | → | `skills[]` |
@@ -216,7 +220,7 @@ Patch 的**路径根是应用 JSON 对象本身**，一次提交一个 patch 数
 
 ## 7. 渲染规则（AI 应知道的展示行为）
 
-- **小节分组**：连续同类型块合并到一个小节标题下。有自动标题的类型：`education→Education`、`experience→Experience`、`projects→Projects`、`skills→Skills`；`header` 与 `custom` 没有自动标题（`custom` 用自身 `title` 作标题）。
+- **小节分组**：连续同类型块合并到一个小节标题下。有自动标题的类型：`education→Education`、`work→Work Experience`、`research→Research Experience`、`projects→Projects`、`skills→Skills`；`header` 与 `custom` 没有自动标题（`custom` 用自身 `title` 作标题）。
 - **日期显示**：由 `meta.dateFormat` 决定 `Jun 2022` 或 `2022-06`；`current=true` 显示 `开始 – Present`。
 - `visible:false` 的块在预览/打印中隐藏。
 - 顺序即文档顺序：header 建议放最前；想让某小节出现在别的类型之间，就调整 `blocks` 数组顺序。
@@ -248,7 +252,7 @@ Patch 的**路径根是应用 JSON 对象本身**，一次提交一个 patch 数
     },
     {
       "id": "b_a2",
-      "type": "experience",
+      "type": "work",
       "data": {
         "position": "Senior ML Engineer",
         "organization": "Alibaba Cloud",

@@ -42,7 +42,7 @@
     },
     {
       "id": "b_s4",
-      "type": "experience",
+      "type": "work",
       "data": {
         "organization": "Alibaba Cloud", "position": "Senior Machine Learning Engineer",
         "location": "Hangzhou", "startDate": "2021-07", "endDate": "", "current": true,
@@ -57,7 +57,7 @@
     },
     {
       "id": "b_s5",
-      "type": "experience",
+      "type": "research",
       "data": {
         "organization": "Stanford University", "position": "Research Assistant",
         "location": "Stanford, CA", "startDate": "2019-06", "endDate": "2020-08", "current": false,

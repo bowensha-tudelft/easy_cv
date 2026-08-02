@@ -46,10 +46,16 @@ const tests = `
   const preview = els['#preview-pane'].innerHTML;
   assert(preview.includes('林晓'), 'preview 应包含姓名');
   assert(preview.includes('Alibaba Cloud'), 'preview 应包含公司');
-  assert(preview.includes('Experience'), 'preview 应有 Experience 区块标题');
-  assert((preview.match(/Experience/g) || []).length === 1, 'Experience 标题只出现一次（分组）');
+  assert(preview.includes('Work Experience'), 'preview 应有 Work Experience 标题');
+  assert(preview.includes('Research Experience'), 'preview 应有 Research Experience 标题');
   assert(preview.includes('cv-links'), 'preview 应包含链接行');
   assert(store.state.blocks.every(b => b.collapsed === true), '块默认折叠');
+
+  // 1b. 迁移：旧 experience 类型 → research
+  localStorage.setItem('easy_cv.draft', JSON.stringify({ schemaVersion: 1, theme: 'classic', accent: '#1f3864', meta: { dateFormat: 'MMM YYYY' }, blocks: [{ id: 'b_old', type: 'experience', data: {}, visible: true }] }));
+  const migrated = loadInitial();
+  assert(migrated.blocks[0].type === 'research', '旧 experience 迁移为 research');
+  localStorage.removeItem('easy_cv.draft');
 
   // HTML 转义生效：注入内容被转义，不出现原始标签
   const evil = '<img src=x onerror=alert(1)>';
