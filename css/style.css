@@ -126,7 +126,7 @@ body {
   --head-font: Georgia, "Noto Serif SC", "Songti SC", SimSun, serif;
 }
 .page.modern {
-  --body-font: -apple-system, "Segoe UI", Roboto, "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  --body-font: Arial, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
   --head-font: var(--body-font);
 }
 .page { font-family: var(--body-font); }
