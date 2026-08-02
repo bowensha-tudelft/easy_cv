@@ -141,8 +141,9 @@ body {
 .page h1 { font-size: 19pt; margin-bottom: 2px; letter-spacing: .01em; }
 .page .cv-title { font-size: 11.5pt; color: #444; margin-bottom: 6px; }
 .page .cv-contact { display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: 9.5pt; color: #333; }
-.page .cv-contact a { color: inherit; text-decoration: none; }
-.page .cv-contact .ic { color: var(--accent); vertical-align: -2px; }
+.page .cv-contact a, .page .cv-contact span { display: inline-flex; align-items: center; gap: 4px; color: inherit; }
+.page .cv-contact a { text-decoration: none; }
+.page .cv-contact .ic { color: var(--accent); }
 .page .cv-links { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 7px; font-size: 9.5pt; }
 .page .cv-link { display: inline-flex; align-items: center; gap: 4px; color: #333; text-decoration: none; }
 .page .cv-link .ic { color: var(--accent); }

@@ -131,11 +131,15 @@ function bindEvents() {
 }
 
 function loadInitial() {
+  let state;
   try {
     const raw = localStorage.getItem('easy_cv.draft');
-    if (raw) return JSON.parse(raw);
+    if (raw) state = JSON.parse(raw);
   } catch (e) { /* 忽略 */ }
-  return deepClone(SAMPLE);
+  if (!state) state = deepClone(SAMPLE);
+  // 块默认折叠（已有折叠状态则尊重）
+  for (const b of state.blocks) if (typeof b.collapsed !== 'boolean') b.collapsed = true;
+  return state;
 }
 function buildAddMenu() {
   $('#addMenu').innerHTML = Object.keys(BLOCK_TYPES).map(k => {

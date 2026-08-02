@@ -49,6 +49,7 @@ const tests = `
   assert(preview.includes('Experience'), 'preview 应有 Experience 区块标题');
   assert((preview.match(/Experience/g) || []).length === 1, 'Experience 标题只出现一次（分组）');
   assert(preview.includes('cv-links'), 'preview 应包含链接行');
+  assert(store.state.blocks.every(b => b.collapsed === true), '块默认折叠');
 
   // HTML 转义生效：注入内容被转义，不出现原始标签
   const evil = '<img src=x onerror=alert(1)>';
