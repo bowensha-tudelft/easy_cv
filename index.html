@@ -19,7 +19,6 @@
     <span class="spacer"></span>
     <button class="btn" data-act="import">导入</button>
     <button class="btn" data-act="export" id="btn-export">导出</button>
-    <button class="btn" data-act="dd-typst" title="Typst 高级排版导出">Typst ▾</button>
     <button class="btn primary" data-act="print" title="Ctrl+P">打印 / 导出 PDF</button>
   </header>
 
@@ -60,10 +59,6 @@
   <div class="menu-item" data-act="menu-dup">⧉ 复制</div>
   <div class="menu-item danger" data-act="menu-del">✕ 删除</div>
 </div>
-<div class="menu" id="typstMenu" hidden>
-  <div class="menu-item" data-act="typst-source">⬇ 下载 .typ 源码</div>
-  <div class="menu-item" data-act="typst-pdf">🖨 导出 Typst PDF（浏览器编译）</div>
-</div>
 
 <div class="modal-mask" id="settings-modal" hidden>
   <div class="modal">
@@ -93,7 +88,6 @@
 <script src="js/render.js"></script>
 <script src="js/editor.js"></script>
 <script src="js/export.js"></script>
-<script src="js/typst.js"></script>
 <script src="js/sample.js"></script>
 <script src="js/boot.js"></script>
 </body>

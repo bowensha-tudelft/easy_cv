@@ -29,8 +29,6 @@
 
 ## v2.1（stretch）—— 未实现
 
-- [ ] Typst 高级导出：生成的 `.typ` 在 typst playground 能编译
-- [ ] 浏览器内 WASM 编译含中文的 PDF
 - [ ] `languages` / `awards` 块类型、拖拽排序
 
 ## 回归

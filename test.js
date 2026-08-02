@@ -34,7 +34,7 @@ global.localStorage = {
 };
 
 /* ---- 拼接全部模块 + 测试代码，一次性 eval（共享作用域） ---- */
-const order = ['utils', 'blocks', 'themes', 'store', 'render', 'editor', 'export', 'typst', 'sample', 'boot'];
+const order = ['utils', 'blocks', 'themes', 'store', 'render', 'editor', 'export', 'sample', 'boot'];
 let code = '';
 for (const f of order) code += '\n' + fs.readFileSync(path.join(__dirname, 'js', f + '.js'), 'utf8');
 
@@ -149,14 +149,7 @@ const tests = `
   removeBullet(expId, 'highlights', 0);
   assert(store.state.blocks.find(b => b.id === expId).data.highlights[0] === 'b', 'removeBullet 删除');
 
-  // 7. Typst 源码生成
-  const tsrc = typstDoc(store.state);
-  assert(tsrc.includes('#set page('), 'typst 有页面设置');
-  assert(tsrc.includes('Work Experience'), 'typst 有 Work Experience 小节');
-  assert(tsrc.includes('Alibaba Cloud'), 'typst 含机构内容');
-  assert(tsrc.includes('#bl(['), 'typst 有列表');
-
-  // 8. 数据不被 localStorage 污染
+  // 7. 数据不被 localStorage 污染
   assert(store.state.blocks.every(b => b.id && b.type), '所有块有 id 和 type');
 
   console.log('ALL SMOKE TESTS PASSED ✅  (' + store.state.blocks.length + ' blocks)');
