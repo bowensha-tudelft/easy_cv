@@ -101,6 +101,9 @@ body {
 .links { display: flex; flex-direction: column; gap: 6px; }
 .link-row { display: grid; grid-template-columns: 110px 1fr 1fr auto; gap: 6px; align-items: center; }
 .link-row select, .link-row input { padding: 4px 6px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; }
+.bullets { display: flex; flex-direction: column; gap: 6px; }
+.bullet-row { display: flex; gap: 6px; align-items: center; }
+.bullet-row input { flex: 1; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; font: inherit; font-size: 13px; }
 
 .add-block-btn {
   align-self: flex-end; flex: 0 0 auto;

@@ -2,6 +2,9 @@
 'use strict';
 
 /* ---- 表单字段渲染 ---- */
+function bulletRowHTML(val, i) {
+  return '<div class="bullet-row"><input type="text" data-bl="' + i + '" value="' + escapeHTML(val || '') + '" placeholder="项目符号内容"><span class="blk-btn del" data-act="rmbullet" data-i="' + i + '" title="删除">✕</span></div>';
+}
 function linkRowHTML(l, i) {
   const opts = Object.keys(ICONS).map(k =>
     '<option value="' + k + '"' + (k === l.icon ? ' selected' : '') + '>' + (ICON_LABELS[k] || k) + '</option>').join('');
@@ -26,8 +29,10 @@ function fieldHTML(b, f) {
       return '<div class="field" data-key="' + f.key + '"><label class="chk"><input type="checkbox" data-field="' + f.key + '"' + (v ? ' checked' : '') + '> ' + f.label + '</label></div>';
     case 'textarea':
       return '<div class="field" data-key="' + f.key + '"><label>' + f.label + '</label><textarea data-field="' + f.key + '">' + escapeHTML(v) + '</textarea></div>';
-    case 'bullets':
-      return '<div class="field" data-key="' + f.key + '"><label>' + f.label + '</label><textarea data-field="bullets:' + f.key + '" placeholder="每行一条">' + escapeHTML((v || []).join('\n')) + '</textarea></div>';
+    case 'bullets': {
+      const rows = (v || []).map((bl, i) => bulletRowHTML(bl, i)).join('');
+      return '<div class="field" data-key="' + f.key + '"><label>' + f.label + '</label><div class="bullets" data-rows>' + rows + '</div><button class="btn small" data-act="addbullet">+ 添加条目</button></div>';
+    }
     case 'tags': {
       const chips = (v || []).map(t => '<span class="chip">' + escapeHTML(t) + '<span class="x" data-act="chip-del" data-tag="' + escapeHTML(t) + '">×</span></span>').join('');
       return '<div class="field" data-key="' + f.key + '"><label>' + f.label + '</label><div class="tags"><div class="chips">' + chips + '</div><input class="tag-input" placeholder="输入后回车添加"></div></div>';
@@ -145,6 +150,37 @@ function removeLinkRow(id, i) {
   const links = (b.data.links || []).filter((_, j) => j !== i);
   store.setField(id, 'links', links);
   renderLinkRows(id);
+}
+
+/* ---- bullets 行编辑器（每个项目符号一行输入框，类似添加链接） ---- */
+function renderBulletRows(id, key) {
+  const b = store.state.blocks.find(x => x.id === id);
+  const card = document.querySelector('.block-card[data-block-id="' + id + '"]');
+  if (!b || !card) return;
+  const wrap = card.querySelector('.field[data-key="' + key + '"] [data-rows]');
+  if (wrap) wrap.innerHTML = (b.data[key] || []).map((bl, i) => bulletRowHTML(bl, i)).join('');
+}
+function updateBullet(id, key, i, val) {
+  const b = store.state.blocks.find(x => x.id === id);
+  if (!b) return;
+  const arr = [...(b.data[key] || [])];
+  if (arr[i] === undefined) return;
+  arr[i] = val;
+  store.setField(id, key, arr);
+}
+function addBullet(id, key) {
+  const b = store.state.blocks.find(x => x.id === id);
+  if (!b) return;
+  const arr = [...(b.data[key] || []), ''];
+  store.setField(id, key, arr);
+  renderBulletRows(id, key);
+}
+function removeBullet(id, key, i) {
+  const b = store.state.blocks.find(x => x.id === id);
+  if (!b) return;
+  const arr = (b.data[key] || []).filter((_, j) => j !== i);
+  store.setField(id, key, arr);
+  renderBulletRows(id, key);
 }
 
 /* ---- 弹层 ---- */

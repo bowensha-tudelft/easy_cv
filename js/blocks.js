@@ -22,6 +22,7 @@ function educationRender(b, ctx) {
   const d = b.data, esc = ctx.esc;
   const head = [d.degree, d.area ? 'in ' + d.area : ''].filter(Boolean).join(' ');
   const org = [d.institution, d.location].filter(Boolean).join(' · ');
+  const hs = (d.highlights || []).filter(Boolean);
   return '<div class="entry">'
     + '<div class="entry-head">'
     + (head ? '<h3>' + esc(head) + '</h3>' : '')
@@ -30,12 +31,13 @@ function educationRender(b, ctx) {
     + (org ? '<div class="org">' + esc(org) + '</div>' : '')
     + (d.score ? '<p class="score">GPA: ' + esc(d.score) + '</p>' : '')
     + ((d.courses || []).length ? '<div class="tags-line">' + d.courses.map(c => '<span class="ptag">' + esc(c) + '</span>').join('') + '</div>' : '')
-    + ((d.highlights || []).length ? '<ul>' + d.highlights.map(h => '<li>' + ctx.inline(h) + '</li>').join('') + '</ul>' : '')
+    + (hs.length ? '<ul>' + hs.map(h => '<li>' + ctx.inline(h) + '</li>').join('') + '</ul>' : '')
     + '</div>';
 }
 function experienceRender(b, ctx) {
   const d = b.data, esc = ctx.esc;
   const org = [d.organization, d.location].filter(Boolean).join(' · ');
+  const hs = (d.highlights || []).filter(Boolean);
   return '<div class="entry">'
     + '<div class="entry-head">'
     + (d.position ? '<h3>' + esc(d.position) + '</h3>' : '')
@@ -43,11 +45,12 @@ function experienceRender(b, ctx) {
     + '</div>'
     + (org ? '<div class="org">' + esc(org) + (d.url ? ' · <a href="' + esc(d.url) + '" target="_blank" rel="noopener">' + esc(d.url) + '</a>' : '') + '</div>' : '')
     + (d.summary ? '<p>' + ctx.inline(d.summary) + '</p>' : '')
-    + ((d.highlights || []).length ? '<ul>' + d.highlights.map(h => '<li>' + ctx.inline(h) + '</li>').join('') + '</ul>' : '')
+    + (hs.length ? '<ul>' + hs.map(h => '<li>' + ctx.inline(h) + '</li>').join('') + '</ul>' : '')
     + '</div>';
 }
 function projectsRender(b, ctx) {
   const d = b.data, esc = ctx.esc;
+  const hs = (d.highlights || []).filter(Boolean);
   return '<div class="entry">'
     + '<div class="entry-head">'
     + (d.name ? '<h3>' + esc(d.name) + '</h3>' : '')
@@ -57,7 +60,7 @@ function projectsRender(b, ctx) {
     + (d.description ? '<p>' + ctx.inline(d.description) + '</p>' : '')
     + (d.url ? '<div class="org"><a href="' + esc(d.url) + '" target="_blank" rel="noopener">' + esc(d.url) + '</a></div>' : '')
     + ((d.keywords || []).length ? '<div class="tags-line">' + d.keywords.map(k => '<span class="ptag">' + esc(k) + '</span>').join('') + '</div>' : '')
-    + ((d.highlights || []).length ? '<ul>' + d.highlights.map(h => '<li>' + ctx.inline(h) + '</li>').join('') + '</ul>' : '')
+    + (hs.length ? '<ul>' + hs.map(h => '<li>' + ctx.inline(h) + '</li>').join('') + '</ul>' : '')
     + '</div>';
 }
 function skillsRender(b, ctx) {
@@ -103,7 +106,7 @@ const BLOCK_TYPES = {
       { key: 'current', label: '在读中', type: 'checkbox' },
       { key: 'score', label: 'GPA / 成绩', type: 'text' },
       { key: 'courses', label: '课程', type: 'tags' },
-      { key: 'highlights', label: '亮点（每行一条）', type: 'bullets' }
+      { key: 'highlights', label: '亮点', type: 'bullets' }
     ],
     renderHTML: educationRender
   },
@@ -119,7 +122,7 @@ const BLOCK_TYPES = {
       { key: 'current', label: '至今在职', type: 'checkbox' },
       { key: 'url', label: '链接', type: 'url' },
       { key: 'summary', label: '概述', type: 'textarea' },
-      { key: 'highlights', label: '职责 / 成果（每行一条）', type: 'bullets' }
+      { key: 'highlights', label: '职责 / 成果', type: 'bullets' }
     ],
     renderHTML: experienceRender
   },
@@ -135,7 +138,7 @@ const BLOCK_TYPES = {
       { key: 'current', label: '至今', type: 'checkbox' },
       { key: 'url', label: '链接', type: 'url' },
       { key: 'summary', label: '概述', type: 'textarea' },
-      { key: 'highlights', label: '职责 / 成果（每行一条）', type: 'bullets' }
+      { key: 'highlights', label: '职责 / 成果', type: 'bullets' }
     ],
     renderHTML: experienceRender
   },
@@ -151,7 +154,7 @@ const BLOCK_TYPES = {
       { key: 'roles', label: '角色（回车添加）', type: 'tags' },
       { key: 'description', label: '描述', type: 'textarea' },
       { key: 'keywords', label: '关键词', type: 'tags' },
-      { key: 'highlights', label: '亮点（每行一条）', type: 'bullets' }
+      { key: 'highlights', label: '亮点', type: 'bullets' }
     ],
     renderHTML: projectsRender
   },
@@ -179,7 +182,7 @@ const BLOCK_TYPES = {
       { key: 'current', label: '至今', type: 'checkbox' },
       { key: 'url', label: '链接', type: 'url' },
       { key: 'summary', label: '概述', type: 'textarea' },
-      { key: 'highlights', label: '职责 / 成果（每行一条）', type: 'bullets' }
+      { key: 'highlights', label: '职责 / 成果', type: 'bullets' }
     ],
     renderHTML: customRender
   }

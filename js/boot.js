@@ -33,19 +33,20 @@ function bindEvents() {
     if (el.matches('[data-field]')) {
       const card = el.closest('.block-card');
       const id = card.dataset.blockId;
-      const key = el.dataset.field;
-      if (key.startsWith('bullets:')) {
-        const real = key.slice(8);
-        store.setField(id, real, el.value.split('\n').map(s => s.trim()).filter(Boolean));
-      } else {
-        store.setField(id, key, el.value);
-      }
+      store.setField(id, el.dataset.field, el.value);
       return;
     }
     if (el.matches('[data-lk]')) {
       const card = el.closest('.block-card');
       const id = card.dataset.blockId;
       updateLink(id, +el.dataset.i, el.dataset.lk, el.value);
+      return;
+    }
+    if (el.matches('[data-bl]')) {
+      const card = el.closest('.block-card');
+      const id = card.dataset.blockId;
+      const key = el.closest('.field').dataset.key;
+      updateBullet(id, key, +el.dataset.bl, el.value);
     }
   });
 
@@ -94,6 +95,8 @@ function bindEvents() {
       }
       case 'addlink': addLinkRow(id); break;
       case 'rmlink': removeLinkRow(id, +p.dataset.i); break;
+      case 'addbullet': { const k = p.closest('.field').dataset.key; addBullet(id, k); break; }
+      case 'rmbullet': { const k = p.closest('.field').dataset.key; removeBullet(id, k, +p.dataset.i); break; }
       case 'add-block': addMenuAfterId = null; showMenu($('#addMenu'), p.getBoundingClientRect()); break;
       case 'pick-type': {
         const bid = store.addBlock(p.dataset.type, addMenuAfterId);

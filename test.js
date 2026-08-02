@@ -139,7 +139,17 @@ const tests = `
   assert(getCustomColors().includes('#abcdef') && !getCustomColors().includes('#123456'), '编辑模式替换色块');
   assert(editingSwatch === null, '编辑模式结束');
 
-  // 6. 数据不被 localStorage 污染
+  // 6. bullets 行编辑器（+ 添加 / 编辑 / 删除，类似添加链接）
+  const expId = store.state.blocks.find(b => b.type === 'work').id;
+  store.setField(expId, 'highlights', ['a', 'b']);
+  addBullet(expId, 'highlights');
+  assert(store.state.blocks.find(b => b.id === expId).data.highlights.length === 3, 'addBullet 添加空行');
+  updateBullet(expId, 'highlights', 2, 'c');
+  assert(store.state.blocks.find(b => b.id === expId).data.highlights[2] === 'c', 'updateBullet 更新');
+  removeBullet(expId, 'highlights', 0);
+  assert(store.state.blocks.find(b => b.id === expId).data.highlights[0] === 'b', 'removeBullet 删除');
+
+  // 7. 数据不被 localStorage 污染
   assert(store.state.blocks.every(b => b.id && b.type), '所有块有 id 和 type');
 
   console.log('ALL SMOKE TESTS PASSED ✅  (' + store.state.blocks.length + ' blocks)');
