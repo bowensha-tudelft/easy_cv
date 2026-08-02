@@ -32,10 +32,7 @@ function typstPreamble(accent, font) {
 )[
   #head
 ][
-  #if right != none [
-    #v(1fr)
-    #text(size: 9pt, fill: rgb("#555555"))[#right]
-  ]
+  #if right != none [#text(size: 9pt, fill: rgb("#555555"))[#right]]
 ]
 #let small(t) = text(size: 9pt)[#t]
 #let sub(t) = text(weight: "bold")[#t]
