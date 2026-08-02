@@ -13,6 +13,11 @@ const TYPST_FONTS = {
   classic: 'Libertinus Serif',
   modern: 'New Computer Modern Sans'
 };
+// WASM 编译器不自带字体，需显式加载且族名必须匹配；经典=衬线 / 现代=无衬线
+const WASM_FONTS = {
+  classic: { name: 'Noto Serif', url: 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notoserif/NotoSerif%5Bwdth,wght%5D.ttf' },
+  modern: { name: 'Noto Sans', url: 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosans/NotoSans%5Bwdth,wght%5D.ttf' }
+};
 
 /* ---- 文档模板头部 ---- */
 function typstPreamble(accent, font) {
@@ -150,8 +155,10 @@ function downloadTypstSource() {
   showToast('已下载 easy-cv.typ（可用 typst CLI 或 typst.app/playground 编译）');
 }
 async function exportTypstPDF() {
-  // WASM 编译器不自带字体，用 Noto Sans（TTF，jsDelivr 带 CORS）；源码字体名匹配"Noto Sans"
-  const source = typstDoc(store.state, { font: 'Noto Sans' });
+  // WASM 编译器不自带字体，按主题加载（经典=衬线 Noto Serif / 现代=无衬线 Noto Sans）
+  const theme = THEMES[store.state.theme] ? store.state.theme : 'classic';
+  const font = WASM_FONTS[theme] || WASM_FONTS.classic;
+  const source = typstDoc(store.state, { font: font.name });
   try {
     showToast('正在加载 Typst 编译器与字体（首次约 30MB，需联网）…');
     const mod = await import('https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-web-compiler@0.7.0/+esm');
@@ -161,7 +168,7 @@ async function exportTypstPDF() {
     const initFn = mod.default || mod.__wbg_init;
     if (typeof initFn === 'function') await initFn(await wasmResp.arrayBuffer());
     // 1) 下载字体
-    const fontResp = await fetch('https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosans/NotoSans%5Bwdth,wght%5D.ttf');
+    const fontResp = await fetch(font.url);
     if (!fontResp.ok) throw new Error('字体下载失败');
     const fontBytes = new Uint8Array(await fontResp.arrayBuffer());
     // 2) 构建字体解析器
