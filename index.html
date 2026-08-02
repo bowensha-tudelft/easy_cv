@@ -31,22 +31,6 @@
     </aside>
 
     <main class="preview-pane" id="preview-pane"></main>
-
-    <aside class="ai-pane">
-      <div class="ai-head">
-        <span>AI 助手</span>
-        <select id="ai-provider">
-          <option value="echo">本地演示（离线）</option>
-          <option value="deepseek">DeepSeek（v2 接入中）</option>
-        </select>
-        <button class="btn small" data-act="ai-settings" title="设置 API key">⚙</button>
-      </div>
-      <div class="ai-msgs" id="ai-msgs"></div>
-      <div class="ai-input">
-        <textarea id="ai-input" placeholder="让 AI 起草/润色简历…（本地演示，离线可用）"></textarea>
-        <button class="btn primary" data-act="ai-send">发送</button>
-      </div>
-    </aside>
   </div>
 </div>
 
@@ -77,14 +61,6 @@
         <option value="YYYY-MM">2022-06 → 2022-06</option>
       </select>
     </div>
-    <div class="field">
-      <label>DeepSeek API Key（v2 agent 接入用，自备，存本机浏览器）</label>
-      <input type="password" id="set-deepseek" placeholder="sk-..." autocomplete="off">
-    </div>
-    <div class="field">
-      <label>Tavily API Key（联网搜索用，v2）</label>
-      <input type="password" id="set-tavily" placeholder="tvly-..." autocomplete="off">
-    </div>
     <div class="modal-actions">
       <button class="btn primary" data-act="save-settings">保存</button>
       <button class="btn" data-act="close-settings">取消</button>
@@ -103,7 +79,6 @@
 <script src="js/render.js"></script>
 <script src="js/editor.js"></script>
 <script src="js/export.js"></script>
-<script src="js/ai.js"></script>
 <script src="js/sample.js"></script>
 <script src="js/boot.js"></script>
 </body>

@@ -93,18 +93,12 @@ function printPDF() { window.print(); }
 
 function openSettings() {
   $('#set-datefmt').value = (store.state.meta && store.state.meta.dateFormat) || 'MMM YYYY';
-  $('#set-deepseek').value = localStorage.getItem('easy_cv.deepseek_key') || '';
-  $('#set-tavily').value = localStorage.getItem('easy_cv.tavily_key') || '';
   $('#settings-modal').hidden = false;
 }
 function saveSettings() {
   store.setDateFormat($('#set-datefmt').value);
-  try {
-    localStorage.setItem('easy_cv.deepseek_key', $('#set-deepseek').value.trim());
-    localStorage.setItem('easy_cv.tavily_key', $('#set-tavily').value.trim());
-  } catch (e) { storageOK = false; }
   $('#settings-modal').hidden = true;
-  aiAddMessage('asst', '设置已保存。DeepSeek / 联网搜索将在 v2 接入后生效；当前用本地演示。');
+  showToast('设置已保存');
 }
 function closeSettings() { $('#settings-modal').hidden = true; }
 function showStorageNote() {

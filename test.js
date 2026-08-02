@@ -34,7 +34,7 @@ global.localStorage = {
 };
 
 /* ---- 拼接全部模块 + 测试代码，一次性 eval（共享作用域） ---- */
-const order = ['utils', 'blocks', 'themes', 'store', 'render', 'editor', 'export', 'ai', 'sample', 'boot'];
+const order = ['utils', 'blocks', 'themes', 'store', 'render', 'editor', 'export', 'sample', 'boot'];
 let code = '';
 for (const f of order) code += '\n' + fs.readFileSync(path.join(__dirname, 'js', f + '.js'), 'utf8');
 
@@ -96,16 +96,7 @@ const tests = `
   const sp = els['#preview-pane'].innerHTML;
   assert(sp.includes('col-left') && sp.includes('col-right'), 'sidebar 渲染两栏');
 
-  // 6. echo AI：缩短简介走 patch
-  const res = await Providers.echo.chat({ userText: '把简介缩短一半', state: store.state });
-  assert(res && res.action === 'patch' && res.patches.length === 1, 'echo 返回 patch');
-  const r2 = store.applyPatch(res.patches);
-  assert(r2.ok, 'echo patch 应用成功');
-  const wordsAfter = store.state.blocks[0].data.summary.split(/\\s+/).filter(Boolean).length;
-  const wordsBefore = SAMPLE.blocks[0].data.summary.split(/\\s+/).filter(Boolean).length;
-  assert(wordsAfter === Math.ceil(wordsBefore / 2), '简介确实缩短一半');
-
-  // 7. 数据不被 localStorage 污染
+  // 6. 数据不被 localStorage 污染
   assert(store.state.blocks.every(b => b.id && b.type), '所有块有 id 和 type');
 
   console.log('ALL SMOKE TESTS PASSED ✅  (' + store.state.blocks.length + ' blocks)');

@@ -42,7 +42,7 @@ body {
 .btn:disabled { opacity: .4; cursor: default; }
 
 /* ============ 主布局 ============ */
-.app-body { flex: 1; display: grid; grid-template-columns: 360px 1fr 330px; min-height: 0; }
+.app-body { flex: 1; display: grid; grid-template-columns: 360px 1fr; min-height: 0; }
 
 /* ============ 编辑器面板 ============ */
 .editor-pane {
@@ -183,7 +183,7 @@ body {
   @bottom-center { content: counter(page) " / " counter(pages); color: #666; font-size: 9pt; }
 }
 @media print {
-  .toolbar, .editor-pane, .ai-pane, .modal-mask, .menu { display: none !important; }
+  .toolbar, .editor-pane, .modal-mask, .menu { display: none !important; }
   body { background: #fff; height: auto; }
   #app { height: auto; }
   .app-body { display: block; }
@@ -193,20 +193,6 @@ body {
   .page p { orphans: 3; widows: 3; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
-
-/* ============ AI 面板 ============ */
-.ai-pane { border-left: 1px solid var(--border); background: var(--panel); display: flex; flex-direction: column; min-height: 0; }
-.ai-head { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 13px; }
-.ai-head select { flex: 1; font: inherit; font-size: 12px; border: 1px solid var(--border); border-radius: 6px; padding: 3px 6px; }
-.ai-msgs { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-.ai-msg { max-width: 94%; padding: 8px 10px; border-radius: 10px; font-size: 12.5px; white-space: pre-wrap; word-break: break-word; line-height: 1.55; }
-.ai-msg.user { align-self: flex-end; background: var(--accent); color: #fff; }
-.ai-msg.asst { align-self: flex-start; background: #eef2f7; }
-.ai-msg.tool { align-self: flex-start; background: #e8f5e9; color: #2e7d32; font-size: 11.5px; font-family: ui-monospace, "Cascadia Code", Consolas, monospace; padding: 4px 8px; }
-.ai-msg .btn { margin-top: 8px; }
-.ai-input { display: flex; gap: 6px; padding: 10px; border-top: 1px solid var(--border); }
-.ai-input textarea { flex: 1; resize: none; font: inherit; font-size: 13px; padding: 8px; border: 1px solid var(--border); border-radius: 8px; height: 54px; }
-.ai-input .btn { align-self: flex-end; }
 
 /* ============ 弹层 ============ */
 .menu {

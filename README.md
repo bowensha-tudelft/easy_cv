@@ -1,6 +1,6 @@
 # Easy CV —— 简历块编辑器
 
-一个**块式** CV 编辑器：左侧编辑块（点 `+` 添加）、中间实时预览、右侧 AI 助手面板。打开即用、零安装、离线可用。
+一个**块式** CV 编辑器：左侧编辑块（点 `+` 添加）、右侧实时预览，`Ctrl+P` 直接导出 PDF。打开即用、零安装、离线可用。
 
 ## 快速开始
 
@@ -29,7 +29,6 @@ easy_cv/
 │   ├── render.js       预览渲染（预览 DOM 即打印对象）
 │   ├── editor.js       编辑器 UI（表单字段、tags/links 子组件、弹层）
 │   ├── export.js       导出/导入/打印/设置 + JSON Resume 映射
-│   ├── ai.js           AI 面板（v1 本地 echo 占位）
 │   ├── sample.js       示例数据
 │   └── boot.js         事件绑定 + 启动
 ├── sample-cv.json      示例数据（可作导入夹具）
@@ -40,18 +39,14 @@ easy_cv/
 
 > 设计说明：用普通 `<script>`（非 ES module）按顺序加载，因此 **`file://` 双击即可运行**，不需要服务器、不需要构建。若以后要分享成"单个 HTML 文件"，可加一个拼接脚本（当前刻意不做，保持模块化）。
 
-## AI 面板（当前为本地演示）
+## AI 集成方式（不在应用内做 AI）
 
-右侧 AI 助手 v1 只提供**本地占位**（离线可用）：
+应用**不内置 AI 对话**（已砍掉，避免重复造轮子）。AI 能力通过两种方式使用：
 
-- 输入「把简介缩短一半」→ 演示通过 JSON Patch 修改数据 + 可撤销
-- 输入「读一下我的简历」→ 列出当前所有块
+1. **Agent / skill**：用 Claude Code 建一个 skill，读 `CV_JSON_SPEC.md` 了解字段与格式，直接编辑 `*.json`（再导入应用）。这是"改文件"式 agent 的推荐做法。
+2. **对话式 AI**：把 `CV_JSON_SPEC.md` 发给任意 AI，让它生成/修改 JSON，再导入应用。
 
-**v2 规划**（未实现）：
-
-- 接 **DeepSeek**（OpenAI 兼容 API），用你自己的 key（设置里填，存本机浏览器 localStorage）；让 AI 读/改 CV 的字段规范见 **`CV_JSON_SPEC.md`**（可作为 agent 的 system prompt 上下文）
-- agent 级能力：`read_cv`（读取当前 CV）→ `patch_blocks`（JSON Patch 修改块，可撤销）→ `web_search`（Tavily 联网搜索）→ `ask_user`（提问）
-- ⚠️ 注意：`file://` 下请求 API 需要服务端返回 `Access-Control-Allow-Origin: *`，接 v2 时先用 `curl` 验证 DeepSeek / Tavily 的 CORS
+**`CV_JSON_SPEC.md` 是唯一需要维护的"AI 接口"**——它完整描述了字段、值格式、JSON Patch 路径和 JSON Resume 映射。
 
 ## 已知限制 / 注意事项
 

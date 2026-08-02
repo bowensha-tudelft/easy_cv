@@ -111,8 +111,6 @@ function bindEvents() {
       case 'dd-theme': showMenu($('#themeMenu'), p.getBoundingClientRect()); break;
       case 'dd-export': showMenu($('#exportMenu'), p.getBoundingClientRect()); break;
       case 'dd-settings': openSettings(); break;
-      case 'ai-send': aiSend(); break;
-      case 'ai-settings': openSettings(); break;
       case 'save-settings': saveSettings(); break;
       case 'close-settings': closeSettings(); break;
     }
@@ -130,10 +128,6 @@ function bindEvents() {
     else if (mod && !e.shiftKey && k === 's') { e.preventDefault(); saveJSONFile(); }
   });
 
-  // Enter 发送 AI 消息
-  $('#ai-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); aiSend(); }
-  });
 }
 
 function loadInitial() {
@@ -161,7 +155,6 @@ function boot() {
   renderPreview(store.state);
   updateToolbar();
   bindEvents();
-  aiAddMessage('asst', '你好，我是你的 CV 助手（本地演示）。\n\nv2 将接入 DeepSeek agent：读取 → 修改 → 联网搜索。\n现在可以试试「把简介缩短一半」或「读一下我的简历」。');
 }
 
 boot();
