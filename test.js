@@ -118,6 +118,14 @@ const tests = `
   removeCustomColor('#123456');
   assert(!getCustomColors().includes('#123456'), '自定义色右键删除');
 
+  // 5d. 自定义色块：修改（编辑模式替换）
+  saveCustomColors(['#123456']);
+  editingSwatch = '#123456';
+  $('#accent-input').value = '#abcdef';
+  addCustomColor();
+  assert(getCustomColors().includes('#abcdef') && !getCustomColors().includes('#123456'), '编辑模式替换色块');
+  assert(editingSwatch === null, '编辑模式结束');
+
   // 6. 数据不被 localStorage 污染
   assert(store.state.blocks.every(b => b.id && b.type), '所有块有 id 和 type');
 

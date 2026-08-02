@@ -2,6 +2,8 @@
 'use strict';
 
 let store = null;
+let editingSwatch = null;
+let swatchMenuHex = null;
 
 function bindEvents() {
   const list = $('#block-list');
@@ -110,9 +112,10 @@ function bindEvents() {
       case 'theme': store.setTheme(p.dataset.theme); hideMenus(); break;
       case 'dd-theme': showMenu($('#themeMenu'), p.getBoundingClientRect()); break;
       case 'dd-color': syncAccentUI(); showMenu($('#colorMenu'), p.getBoundingClientRect()); break;
-      case 'accent-pick': store.setAccent(p.dataset.accent); syncAccentUI(); break;
-      case 'accent-apply': applyAccentInput(); break;
+      case 'accent-pick': editingSwatch = null; setAddBtnLabel(); $('#swatchMenu').hidden = true; store.setAccent(p.dataset.accent); syncAccentUI(); break;
       case 'accent-add': addCustomColor(); break;
+      case 'swatch-edit': startEditSwatch(swatchMenuHex); break;
+      case 'swatch-del': removeCustomColor(swatchMenuHex); hideMenus(); showToast('已删除 ' + swatchMenuHex); break;
       case 'accent-random': { const hex = randomAccent(); store.setAccent(hex); syncAccentUI(); showToast('随机配色 ' + hex); break; }
       case 'dd-export': showMenu($('#exportMenu'), p.getBoundingClientRect()); break;
       case 'dd-settings': openSettings(); break;
@@ -124,17 +127,16 @@ function bindEvents() {
   // 导入文件
   $('#import-file').addEventListener('change', e => { if (e.target.files[0]) importJSONFile(e.target.files[0]); e.target.value = ''; });
 
-  // 配色输入框回车
-  $('#accent-input').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applyAccentInput(); } });
+  // 配色输入框回车：编辑模式保存修改，否则应用为主题色
+  $('#accent-input').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); editingSwatch ? addCustomColor() : applyAccentInput(); } });
 
-  // 自定义色块：右键删除
+  // 自定义色块：右键弹出修改/删除菜单
   $('#color-swatches').addEventListener('contextmenu', e => {
     const sw = e.target.closest('.swatch');
     if (!sw || !sw.dataset.custom) return;
     e.preventDefault();
-    const hex = sw.dataset.accent;
-    removeCustomColor(hex);
-    showToast('已删除 ' + hex);
+    swatchMenuHex = sw.dataset.accent;
+    showMenu($('#swatchMenu'), { left: e.clientX, top: e.clientY, bottom: e.clientY, right: e.clientX });
   });
 
   // 快捷键
@@ -174,7 +176,7 @@ function saveCustomColors(arr) {
   try { localStorage.setItem('easy_cv.custom_colors', JSON.stringify(arr)); } catch (e) { /* 忽略 */ }
 }
 function swatchHTML(hex, isCustom) {
-  return '<button class="swatch' + (isCustom ? ' custom' : '') + '" data-act="accent-pick" data-accent="' + hex + '" style="background:' + hex + '" title="' + hex + (isCustom ? '（右键删除）' : '') + '"></button>';
+  return '<button class="swatch' + (isCustom ? ' custom' : '') + '" data-act="accent-pick" data-accent="' + hex + '"' + (isCustom ? ' data-custom="1"' : '') + ' style="background:' + hex + '" title="' + hex + (isCustom ? '（右键：修改/删除）' : '') + '"></button>';
 }
 function buildColorMenu() {
   const presets = ACCENT_PRESETS.map(p => p.hex);
@@ -184,8 +186,23 @@ function buildColorMenu() {
 function removeCustomColor(hex) {
   const custom = getCustomColors().filter(c => c !== hex);
   saveCustomColors(custom);
+  if (editingSwatch === hex) editingSwatch = null;
   buildColorMenu();
   syncAccentUI();
+  setAddBtnLabel();
+}
+function setAddBtnLabel() {
+  const b = $('#accent-add');
+  if (b) b.textContent = editingSwatch ? '保存' : '+ 添加';
+}
+function startEditSwatch(hex) {
+  editingSwatch = hex;
+  $('#accent-input').value = hex;
+  $('#accent-input').focus();
+  $('#accent-input').select();
+  setAddBtnLabel();
+  hideMenus();
+  showToast('正在修改 ' + hex + '，改完按 Enter 或点「保存」');
 }
 function syncAccentUI() {
   const cur = normalizeAccent(store.state.accent);
@@ -193,6 +210,7 @@ function syncAccentUI() {
   $('#accent-current').textContent = cur;
   document.querySelectorAll('#color-swatches .swatch').forEach(el => {
     el.classList.toggle('active', String(el.dataset.accent).toLowerCase() === cur);
+    el.classList.toggle('editing', String(el.dataset.accent).toLowerCase() === (editingSwatch || '').toLowerCase());
   });
 }
 function applyAccentInput() {
@@ -204,10 +222,19 @@ function applyAccentInput() {
 function addCustomColor() {
   const hex = parseColor($('#accent-input').value.trim());
   if (!hex) { showToast('颜色格式：支持 #RRGGBB / #RGB / rgb(r,g,b)'); return; }
-  const custom = getCustomColors();
+  let custom = getCustomColors();
+  if (editingSwatch) {
+    // 编辑模式：替换正在修改的色块
+    custom = custom.filter(c => c !== editingSwatch);
+    editingSwatch = null;
+    if (!custom.includes(hex)) custom.push(hex);
+    saveCustomColors(custom);
+    buildColorMenu(); syncAccentUI(); setAddBtnLabel();
+    showToast('已修改为 ' + hex);
+    return;
+  }
   if (!custom.includes(hex)) { custom.push(hex); saveCustomColors(custom); }
-  buildColorMenu();
-  syncAccentUI();
+  buildColorMenu(); syncAccentUI();
   showToast('已添加 ' + hex);
 }
 function buildAddMenu() {
