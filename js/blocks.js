@@ -69,10 +69,17 @@ function skillsRender(b, ctx) {
 }
 function customRender(b, ctx) {
   const d = b.data, esc = ctx.esc;
+  const hasHead = !!(d.subtitle || d.rightText);
+  const hasBody = !!(d.body && d.body.trim());
   return '<section class="custom-block">'
     + (d.title ? '<h2 class="section-title">' + esc(d.title) + '</h2>' : '')
-    + ((d.subtitle || d.rightText) ? '<div class="custom-meta"><span>' + esc(d.subtitle) + '</span><span class="dates">' + esc(d.rightText) + '</span></div>' : '')
-    + '<div class="custom-body' + (d.columns === 'two' ? ' two-col' : '') + '">' + ctx.markup(d.body) + '</div>'
+    + (hasHead || hasBody ? '<div class="entry">' : '')
+    + (hasHead ? '<div class="entry-head">'
+        + (d.subtitle ? '<h3>' + esc(d.subtitle) + '</h3>' : '')
+        + '<div class="dates">' + (d.rightText ? esc(d.rightText) : '') + '</div>'
+      + '</div>' : '')
+    + (hasBody ? '<div class="custom-body">' + ctx.markup(d.body) + '</div>' : '')
+    + (hasHead || hasBody ? '</div>' : '')
     + '</section>';
 }
 
@@ -169,12 +176,11 @@ const BLOCK_TYPES = {
   },
   custom: {
     key: 'custom', label: '自定义', icon: 'grid', sectionTitle: null,
-    defaults: () => ({ title: '', subtitle: '', rightText: '', body: '', columns: 'none' }),
+    defaults: () => ({ title: '', subtitle: '', rightText: '', body: '' }),
     fields: [
       { key: 'title', label: '标题', type: 'text' },
-      { key: 'subtitle', label: '副标题', type: 'text' },
+      { key: 'subtitle', label: '标题行（继承经历样式）', type: 'text' },
       { key: 'rightText', label: '右侧信息（如时间）', type: 'text' },
-      { key: 'columns', label: '正文分栏', type: 'select', options: [{ v: 'none', l: '单栏' }, { v: 'two', l: '双栏' }] },
       { key: 'body', label: '正文（- 开头转列表，**加粗**，空行分段）', type: 'textarea' }
     ],
     renderHTML: customRender

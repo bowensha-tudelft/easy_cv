@@ -55,6 +55,6 @@ const SAMPLE = {
     { id: 'b_s7', type: 'skills', data: { name: 'Programming Languages', keywords: ['Python', 'TypeScript', 'C++', 'SQL'], level: '', showLevel: false } },
     { id: 'b_s8', type: 'skills', data: { name: 'ML Frameworks', keywords: ['PyTorch', 'TensorFlow', 'HuggingFace', 'vLLM'], level: '', showLevel: false } },
     { id: 'b_s9', type: 'skills', data: { name: 'Tools', keywords: ['Git', 'Docker', 'Kubernetes', 'AWS'], level: '', showLevel: false } },
-    { id: 'b_s10', type: 'custom', data: { title: 'Publications', subtitle: 'Selected', rightText: '', body: '- Xiao Lin, et al. "Efficient Neural Retrieval for Open-domain QA", EMNLP 2020\n- Xiao Lin, et al. "Contrastive Learning for Dense Retrieval", NAACL 2021', columns: 'none' } }
+    { id: 'b_s10', type: 'custom', data: { title: 'Publications', subtitle: 'Selected', rightText: '', body: '- Xiao Lin, et al. "Efficient Neural Retrieval for Open-domain QA", EMNLP 2020\n- Xiao Lin, et al. "Contrastive Learning for Dense Retrieval", NAACL 2021' } }
   ]
 };

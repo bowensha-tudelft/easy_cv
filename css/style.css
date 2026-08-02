@@ -164,9 +164,7 @@ body {
 .page .skill-name { font-weight: 600; }
 .page .skill-level { color: #555; }
 .page .custom-block { margin-bottom: 9px; }
-.page .custom-meta { display: flex; justify-content: space-between; gap: 10px; font-size: 9.5pt; color: #555; }
 .page .custom-body p { margin: 4px 0; }
-.page .custom-body.two-col { columns: 2; column-gap: 8mm; }
 
 /* ============ 打印 ============ */
 @page {

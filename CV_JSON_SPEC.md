@@ -136,15 +136,16 @@
 | `level` | text | 熟练度，可选 |
 | `showLevel` | checkbox | 为 true 时渲染 `· 熟练度` |
 
-### 3.6 `custom` —— 自定义（无自动小节标题，用自身的 `title` 作标题）
+### 3.6 `custom` —— 自定义（无自动小节标题，用自身的 `title` 作标题；内容继承 `work`/`research` 的样式）
 
 | 字段 | 类型 | 说明 |
 |---|---|---|
-| `title` | text | 标题，渲染为小节标题 |
-| `subtitle` | text | 副标题，可选 |
-| `rightText` | text | 右侧信息（如时间），可选 |
-| `columns` | select | `"none"`（单栏）或 `"two"`（双栏） |
+| `title` | text | 标题，渲染为小节标题（可自定义） |
+| `subtitle` | text | 标题行，渲染为条目标题（h3，类似 work/research 的 position） |
+| `rightText` | text | 右侧信息（如时间），对齐到标题行最右 |
 | `body` | textarea | 正文，支持轻量标记：**以 `- ` 开头的行变成列表项**；`**加粗**` 加粗；空行分段 |
+
+> 无单栏/双栏选项（2026-08 移除，一律单栏）；已有数据里的 `columns` 字段被忽略。
 
 ## 4. 值格式约定（容易出错处）
 
