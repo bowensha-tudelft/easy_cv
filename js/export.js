@@ -84,7 +84,7 @@ function importJSONFile(file) {
       const obj = JSON.parse(r.result);
       const state = obj && Array.isArray(obj.blocks) ? obj : JSONResume.fromStrict(obj);
       state.blocks = state.blocks || [];
-      for (const b of state.blocks) if (b.type === 'experience') b.type = 'research';
+      for (const b of state.blocks) migrateBlock(b);
       state.meta = state.meta || { dateFormat: 'MMM YYYY' };
       state.theme = THEMES[state.theme] ? state.theme : 'classic';
       if (!isValidHex(state.accent)) state.accent = DEFAULT_ACCENT;

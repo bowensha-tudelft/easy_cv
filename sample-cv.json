@@ -84,8 +84,12 @@
       "id": "b_s10",
       "type": "custom",
       "data": {
-        "title": "Publications", "subtitle": "Selected", "rightText": "",
-        "body": "- Xiao Lin, et al. \"Efficient Neural Retrieval for Open-domain QA\", EMNLP 2020\n- Xiao Lin, et al. \"Contrastive Learning for Dense Retrieval\", NAACL 2021"
+        "title": "Publications", "position": "Selected", "organization": "", "location": "",
+        "startDate": "", "endDate": "", "current": false, "url": "", "summary": "",
+        "highlights": [
+          "Xiao Lin, et al. \"Efficient Neural Retrieval for Open-domain QA\", EMNLP 2020",
+          "Xiao Lin, et al. \"Contrastive Learning for Dense Retrieval\", NAACL 2021"
+        ]
       }
     }
   ]

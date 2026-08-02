@@ -137,3 +137,25 @@ function randomAccent() {
   const l = 28 + Math.floor(Math.random() * 16);
   return hslToHex(h, s, l);
 }
+
+/* ---- 旧数据迁移 ----
+   experience → research；
+   旧 custom（title/subtitle/rightText/columns/body）→ 继承 experience 字段（title 保留为小节标题） */
+function migrateBlock(b) {
+  if (!b || typeof b !== 'object') return;
+  if (b.type === 'experience') b.type = 'research';
+  if (b.type === 'custom' && b.data && b.data.position === undefined) {
+    const d = b.data;
+    const lines = String(d.body || '').split('\n').map(s => s.trim()).filter(Boolean);
+    d.position = d.subtitle || '';
+    d.organization = '';
+    d.location = '';
+    d.startDate = '';
+    d.endDate = '';
+    d.current = false;
+    d.url = '';
+    d.summary = lines.filter(s => !s.startsWith('- ')).join('\n');
+    d.highlights = lines.filter(s => s.startsWith('- ')).map(s => s.slice(2));
+    delete d.subtitle; delete d.rightText; delete d.columns; delete d.body;
+  }
+}

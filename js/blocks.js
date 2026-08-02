@@ -69,17 +69,9 @@ function skillsRender(b, ctx) {
 }
 function customRender(b, ctx) {
   const d = b.data, esc = ctx.esc;
-  const hasHead = !!(d.subtitle || d.rightText);
-  const hasBody = !!(d.body && d.body.trim());
   return '<section class="custom-block">'
     + (d.title ? '<h2 class="section-title">' + esc(d.title) + '</h2>' : '')
-    + (hasHead || hasBody ? '<div class="entry">' : '')
-    + (hasHead ? '<div class="entry-head">'
-        + (d.subtitle ? '<h3>' + esc(d.subtitle) + '</h3>' : '')
-        + '<div class="dates">' + (d.rightText ? esc(d.rightText) : '') + '</div>'
-      + '</div>' : '')
-    + (hasBody ? '<div class="custom-body">' + ctx.markup(d.body) + '</div>' : '')
-    + (hasHead || hasBody ? '</div>' : '')
+    + experienceRender(b, ctx)
     + '</section>';
 }
 
@@ -176,12 +168,18 @@ const BLOCK_TYPES = {
   },
   custom: {
     key: 'custom', label: '自定义', icon: 'grid', sectionTitle: null,
-    defaults: () => ({ title: '', subtitle: '', rightText: '', body: '' }),
+    defaults: () => ({ title: '', position: '', organization: '', location: '', startDate: '', endDate: '', current: false, url: '', summary: '', highlights: [] }),
     fields: [
-      { key: 'title', label: '标题', type: 'text' },
-      { key: 'subtitle', label: '标题行（继承经历样式）', type: 'text' },
-      { key: 'rightText', label: '右侧信息（如时间）', type: 'text' },
-      { key: 'body', label: '正文（- 开头转列表，**加粗**，空行分段）', type: 'textarea' }
+      { key: 'title', label: '标题（小节标题）', type: 'text' },
+      { key: 'position', label: '职位 / 项目', type: 'text' },
+      { key: 'organization', label: '公司 / 机构', type: 'text' },
+      { key: 'location', label: '地点', type: 'text' },
+      { key: 'startDate', label: '开始', type: 'month', inline: true },
+      { key: 'endDate', label: '结束', type: 'month', inline: true },
+      { key: 'current', label: '至今', type: 'checkbox' },
+      { key: 'url', label: '链接', type: 'url' },
+      { key: 'summary', label: '概述', type: 'textarea' },
+      { key: 'highlights', label: '职责 / 成果（每行一条）', type: 'bullets' }
     ],
     renderHTML: customRender
   }

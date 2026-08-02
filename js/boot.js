@@ -159,9 +159,9 @@ function loadInitial() {
   if (!state) state = deepClone(SAMPLE);
   if (!THEMES[state.theme]) state.theme = 'classic';
   if (!isValidHex(state.accent)) state.accent = DEFAULT_ACCENT;
-  // 兼容旧数据：experience 拆成 work / research，旧块按 research 迁移
+  // 兼容旧数据：experience→research；旧 custom→继承 experience 字段
   for (const b of state.blocks) {
-    if (b.type === 'experience') b.type = 'research';
+    migrateBlock(b);
     // 块默认折叠（已有折叠状态则尊重）
     if (typeof b.collapsed !== 'boolean') b.collapsed = true;
   }

@@ -51,10 +51,17 @@ const tests = `
   assert(preview.includes('cv-links'), 'preview 应包含链接行');
   assert(store.state.blocks.every(b => b.collapsed === true), '块默认折叠');
 
-  // 1b. 迁移：旧 experience 类型 → research
-  localStorage.setItem('easy_cv.draft', JSON.stringify({ schemaVersion: 1, theme: 'classic', accent: '#1f3864', meta: { dateFormat: 'MMM YYYY' }, blocks: [{ id: 'b_old', type: 'experience', data: {}, visible: true }] }));
+  // 1b. 迁移：旧 experience→research；旧 custom→继承 experience 字段
+  localStorage.setItem('easy_cv.draft', JSON.stringify({ schemaVersion: 1, theme: 'classic', accent: '#1f3864', meta: { dateFormat: 'MMM YYYY' }, blocks: [
+    { id: 'b_old1', type: 'experience', data: {}, visible: true },
+    { id: 'b_old2', type: 'custom', data: { title: 'Awards', subtitle: 'Some Award', rightText: '2020', body: '- Won first prize' + String.fromCharCode(10) + '- Runner-up' }, visible: true }
+  ] }));
   const migrated = loadInitial();
   assert(migrated.blocks[0].type === 'research', '旧 experience 迁移为 research');
+  const mc = migrated.blocks[1];
+  assert(mc.type === 'custom' && mc.data.position === 'Some Award', '旧 custom subtitle→position');
+  assert(JSON.stringify(mc.data.highlights) === JSON.stringify(['Won first prize', 'Runner-up']), '旧 custom body -行→highlights');
+  assert(mc.data.title === 'Awards', 'custom title 保留');
   localStorage.removeItem('easy_cv.draft');
 
   // HTML 转义生效：注入内容被转义，不出现原始标签

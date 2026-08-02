@@ -136,16 +136,16 @@
 | `level` | text | 熟练度，可选 |
 | `showLevel` | checkbox | 为 true 时渲染 `· 熟练度` |
 
-### 3.6 `custom` —— 自定义（无自动小节标题，用自身的 `title` 作标题；内容继承 `work`/`research` 的样式）
+### 3.6 `custom` —— 自定义（字段完全继承 `work`/`research`，另加一个 `title` 小节标题）
+
+`custom` 的 `data` 与 `work`/`research` 完全相同（`position`/`organization`/`location`/`startDate`/`endDate`/`current`/`url`/`summary`/`highlights`），**仅多一个 `title`**，渲染为小节标题。适合 awards / certifications / languages 等单条目场景。
 
 | 字段 | 类型 | 说明 |
 |---|---|---|
-| `title` | text | 标题，渲染为小节标题（可自定义） |
-| `subtitle` | text | 标题行，渲染为条目标题（h3，类似 work/research 的 position） |
-| `rightText` | text | 右侧信息（如时间），对齐到标题行最右 |
-| `body` | textarea | 正文，支持轻量标记：**以 `- ` 开头的行变成列表项**；`**加粗**` 加粗；空行分段 |
+| `title` | text | 小节标题（唯一比 work/research 多的字段） |
+| 其余字段 | — | 见 §3.3 |
 
-> 无单栏/双栏选项（2026-08 移除，一律单栏）；已有数据里的 `columns` 字段被忽略。
+> 旧格式（`subtitle`/`rightText`/`columns`/`body`）导入时自动迁移：`subtitle→position`，`body` 的 `- ` 行→`highlights`，其余行→`summary`。
 
 ## 4. 值格式约定（容易出错处）
 
