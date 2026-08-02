@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>Easy CV — 简历块编辑器</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <header class="toolbar">
+    <span class="brand">◆ Easy CV</span>
+    <button class="btn" data-act="undo" id="btn-undo" title="撤销 (Ctrl+Z)">↩ 撤销</button>
+    <button class="btn" data-act="redo" id="btn-redo" title="重做 (Ctrl+Y)">↪ 重做</button>
+    <span class="sep"></span>
+    <button class="btn" data-act="dd-theme" id="btn-theme" title="主题">主题 ▾</button>
+    <button class="btn" data-act="dd-settings" id="btn-settings" title="设置">⚙ 设置</button>
+    <span class="spacer"></span>
+    <button class="btn" data-act="import">导入 JSON</button>
+    <button class="btn" data-act="dd-export" id="btn-export">导出 ▾</button>
+    <button class="btn primary" data-act="print" title="Ctrl+P">打印 / 导出 PDF</button>
+  </header>
+
+  <div class="app-body">
+    <aside class="editor-pane">
+      <p class="pane-title">Blocks</p>
+      <div class="block-list" id="block-list"></div>
+      <button class="add-block-btn" data-act="add-block" title="添加块">+</button>
+    </aside>
+
+    <main class="preview-pane" id="preview-pane"></main>
+
+    <aside class="ai-pane">
+      <div class="ai-head">
+        <span>AI 助手</span>
+        <select id="ai-provider">
+          <option value="echo">本地演示（离线）</option>
+          <option value="deepseek">DeepSeek（v2 接入中）</option>
+        </select>
+        <button class="btn small" data-act="ai-settings" title="设置 API key">⚙</button>
+      </div>
+      <div class="ai-msgs" id="ai-msgs"></div>
+      <div class="ai-input">
+        <textarea id="ai-input" placeholder="让 AI 起草/润色简历…（本地演示，离线可用）"></textarea>
+        <button class="btn primary" data-act="ai-send">发送</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- 弹层：主题 / 导出 / 添加块 / 块操作 / 设置 -->
+<div class="menu" id="themeMenu" hidden>
+  <div class="menu-item" data-act="theme" data-theme="classic">经典（衬线）</div>
+  <div class="menu-item" data-act="theme" data-theme="modern">现代（无衬线）</div>
+  <div class="menu-item" data-act="theme" data-theme="sidebar">双栏侧边（紧凑）</div>
+</div>
+<div class="menu" id="exportMenu" hidden>
+  <div class="menu-item" data-act="export-app">⬇ 应用 JSON（完整往返）</div>
+  <div class="menu-item" data-act="export-strict">⬇ JSON Resume（严格）</div>
+</div>
+<div class="menu" id="addMenu" hidden></div>
+<div class="menu" id="blockMenu" hidden>
+  <div class="menu-item" data-act="menu-insert">+ 在此后插入</div>
+  <div class="menu-item" data-act="menu-dup">⧉ 复制</div>
+  <div class="menu-item danger" data-act="menu-del">✕ 删除</div>
+</div>
+
+<div class="modal-mask" id="settings-modal" hidden>
+  <div class="modal">
+    <h3>设置</h3>
+    <div class="field">
+      <label>日期格式</label>
+      <select id="set-datefmt">
+        <option value="MMM YYYY">2022-06 → Jun 2022</option>
+        <option value="YYYY-MM">2022-06 → 2022-06</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>DeepSeek API Key（v2 agent 接入用，自备，存本机浏览器）</label>
+      <input type="password" id="set-deepseek" placeholder="sk-..." autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Tavily API Key（联网搜索用，v2）</label>
+      <input type="password" id="set-tavily" placeholder="tvly-..." autocomplete="off">
+    </div>
+    <div class="modal-actions">
+      <button class="btn primary" data-act="save-settings">保存</button>
+      <button class="btn" data-act="close-settings">取消</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="import-file" accept=".json,application/json" hidden>
+
+<!-- 模块化加载：普通 <script>（非 ES module）在 file:// 下可用 -->
+<script src="js/utils.js"></script>
+<script src="js/blocks.js"></script>
+<script src="js/themes.js"></script>
+<script src="js/store.js"></script>
+<script src="js/render.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/export.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/sample.js"></script>
+<script src="js/boot.js"></script>
+</body>
+</html>

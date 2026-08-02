@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "theme": "classic",
+  "meta": { "dateFormat": "MMM YYYY" },
+  "blocks": [
+    {
+      "id": "b_s1",
+      "type": "header",
+      "data": {
+        "name": "林晓 (Xiao Lin)",
+        "title": "Machine Learning Engineer · PhD in Computer Science",
+        "email": "xiao.lin@example.com",
+        "phone": "+86 139 0000 0000",
+        "location": "Shanghai, China",
+        "summary": "Machine learning researcher and engineer with 5+ years of experience building LLM-based systems, specializing in retrieval-augmented generation, model compression, and training infrastructure. Passionate about turning research into production systems.",
+        "links": [
+          { "id": "l_s1", "label": "", "icon": "github", "url": "https://github.com/xiaolin" },
+          { "id": "l_s2", "label": "", "icon": "linkedin", "url": "https://linkedin.com/in/xiaolin" },
+          { "id": "l_s3", "label": "", "icon": "scholar", "url": "https://scholar.google.com/citations?user=xiaolin" },
+          { "id": "l_s4", "label": "", "icon": "website", "url": "https://xiaolin.dev" }
+        ]
+      }
+    },
+    {
+      "id": "b_s2",
+      "type": "education",
+      "data": {
+        "institution": "Fudan University", "degree": "PhD", "area": "Computer Science",
+        "location": "Shanghai", "startDate": "2016-09", "endDate": "2021-06",
+        "current": false, "score": "3.9 / 4.0", "courses": [],
+        "highlights": ["Thesis: Efficient Neural Retrieval for Open-domain Question Answering"]
+      }
+    },
+    {
+      "id": "b_s3",
+      "type": "education",
+      "data": {
+        "institution": "Zhejiang University", "degree": "BSc", "area": "Software Engineering",
+        "location": "Hangzhou", "startDate": "2012-09", "endDate": "2016-06",
+        "current": false, "score": "", "courses": [], "highlights": []
+      }
+    },
+    {
+      "id": "b_s4",
+      "type": "experience",
+      "data": {
+        "organization": "Alibaba Cloud", "position": "Senior Machine Learning Engineer",
+        "location": "Hangzhou", "startDate": "2021-07", "endDate": "", "current": true,
+        "summary": "Leading the retrieval team for a code-assistant platform serving millions of users.",
+        "highlights": [
+          "Built a RAG pipeline that cut answer latency by 40% and improved hit rate by 12 points",
+          "Led quantization (INT8/INT4) of a 70B model to run on commodity GPUs",
+          "Mentored 3 junior engineers; authored 2 internal infra design docs"
+        ],
+        "url": ""
+      }
+    },
+    {
+      "id": "b_s5",
+      "type": "experience",
+      "data": {
+        "organization": "Stanford University", "position": "Research Assistant",
+        "location": "Stanford, CA", "startDate": "2019-06", "endDate": "2020-08", "current": false,
+        "summary": "Worked on dense retrieval and contrastive learning with large-scale pretrained encoders.",
+        "highlights": ["Co-authored 2 papers (EMNLP 2020, NAACL 2021)", "Open-sourced a training framework used by 3 research groups"],
+        "url": ""
+      }
+    },
+    {
+      "id": "b_s6",
+      "type": "projects",
+      "data": {
+        "name": "Easy CV", "url": "https://github.com/xiaolin/easy-cv",
+        "description": "A block-based, single-file HTML resume editor that compiles to a print-ready PDF with zero dependencies.",
+        "startDate": "2026-05", "endDate": "", "current": true,
+        "keywords": ["HTML", "Vanilla JS", "PDF"], "roles": ["Author"],
+        "highlights": ["Zero-install: open a single HTML file and it works offline"]
+      }
+    },
+    { "id": "b_s7", "type": "skills", "data": { "name": "Programming Languages", "keywords": ["Python", "TypeScript", "C++", "SQL"], "level": "", "showLevel": false } },
+    { "id": "b_s8", "type": "skills", "data": { "name": "ML Frameworks", "keywords": ["PyTorch", "TensorFlow", "HuggingFace", "vLLM"], "level": "", "showLevel": false } },
+    { "id": "b_s9", "type": "skills", "data": { "name": "Tools", "keywords": ["Git", "Docker", "Kubernetes", "AWS"], "level": "", "showLevel": false } },
+    {
+      "id": "b_s10",
+      "type": "custom",
+      "data": {
+        "title": "Publications", "subtitle": "Selected", "rightText": "",
+        "body": "- Xiao Lin, et al. \"Efficient Neural Retrieval for Open-domain QA\", EMNLP 2020\n- Xiao Lin, et al. \"Contrastive Learning for Dense Retrieval\", NAACL 2021",
+        "columns": "none"
+      }
+    }
+  ]
+}
