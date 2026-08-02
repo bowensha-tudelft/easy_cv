@@ -3,7 +3,7 @@
 
 /* ---- 表单字段渲染 ---- */
 function bulletRowHTML(val, i) {
-  return '<div class="bullet-row"><input type="text" data-bl="' + i + '" value="' + escapeHTML(val || '') + '" placeholder="项目符号内容"><span class="blk-btn del" data-act="rmbullet" data-i="' + i + '" title="删除">✕</span></div>';
+  return '<div class="bullet-row"><textarea data-bl="' + i + '" placeholder="项目符号内容">' + escapeHTML(val || '') + '</textarea><span class="blk-btn del" data-act="rmbullet" data-i="' + i + '" title="删除">✕</span></div>';
 }
 function linkRowHTML(l, i) {
   const opts = Object.keys(ICONS).map(k =>
