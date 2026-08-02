@@ -2,6 +2,15 @@
 'use strict';
 
 const $ = s => document.querySelector(s);
+
+function showToast(msg) {
+  const t = $('#toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.hidden = false;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.hidden = true; }, 2200);
+}
 const uid = (p = 'b') => p + '_' + Math.random().toString(36).slice(2, 8);
 const deepClone = x => structuredClone(x);
 const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };

@@ -111,3 +111,66 @@ function showStorageNote() {
   const b = $('#btn-export');
   if (b && !b.dataset.noteShown) { b.dataset.noteShown = '1'; alert('注意：此浏览器不允许本地自动保存（localStorage 受限），请用「导出 JSON」手动保存。'); }
 }
+
+/* ---- Ctrl+S：保存应用 JSON 到指定文件（File System Access API） ---- */
+const FSDB = 'easy_cv_fs';
+function idbOpen() {
+  return new Promise((res, rej) => {
+    if (!window.indexedDB) return rej(new Error('no idb'));
+    const r = indexedDB.open(FSDB, 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('handles');
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+async function fsLoadHandle() {
+  try {
+    const db = await idbOpen();
+    return await new Promise((res, rej) => {
+      const tx = db.transaction('handles', 'readonly');
+      const rq = tx.objectStore('handles').get('app');
+      rq.onsuccess = () => res(rq.result || null);
+      rq.onerror = () => rej(rq.error);
+    });
+  } catch (e) { return null; }
+}
+async function fsSaveHandle(h) {
+  try {
+    const db = await idbOpen();
+    await new Promise((res, rej) => {
+      const tx = db.transaction('handles', 'readwrite');
+      tx.objectStore('handles').put(h, 'app');
+      tx.oncomplete = res;
+      tx.onerror = () => rej(tx.error);
+    });
+  } catch (e) { /* 忽略，保存失败就每次询问 */ }
+}
+let savedFileHandle = null;
+async function saveJSONFile() {
+  const json = JSON.stringify(store.state, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  try {
+    if (window.showSaveFilePicker) {
+      let handle = savedFileHandle || await fsLoadHandle();
+      if (!handle) {
+        // 首次：让用户选一次保存位置（建议项目文件夹，可重命名为 easy-cv.json）
+        handle = await window.showSaveFilePicker({
+          suggestedName: 'easy-cv.json',
+          types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+        });
+        savedFileHandle = handle;
+        fsSaveHandle(handle);
+      }
+      const w = await handle.createWritable();
+      await w.write(blob);
+      await w.close();
+      showToast('已保存 easy-cv.json（Ctrl+S 继续自动保存到此文件）');
+      return;
+    }
+  } catch (err) {
+    if (err && err.name === 'AbortError') return; // 用户取消选择，不打扰
+    // 其它失败（无权限等）回退到普通下载
+  }
+  downloadBlob(blob, 'easy-cv.json');
+  showToast('已导出 easy-cv.json 到浏览器下载目录');
+}

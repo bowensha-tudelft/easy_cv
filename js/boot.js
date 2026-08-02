@@ -124,8 +124,10 @@ function bindEvents() {
   // 快捷键
   document.addEventListener('keydown', e => {
     const mod = e.ctrlKey || e.metaKey;
-    if (mod && !e.shiftKey && e.key.toLowerCase() === 'z') { e.preventDefault(); store.undo(); }
-    else if (mod && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) { e.preventDefault(); store.redo(); }
+    const k = e.key.toLowerCase();
+    if (mod && !e.shiftKey && k === 'z') { e.preventDefault(); store.undo(); }
+    else if (mod && (k === 'y' || (e.shiftKey && k === 'z'))) { e.preventDefault(); store.redo(); }
+    else if (mod && !e.shiftKey && k === 's') { e.preventDefault(); saveJSONFile(); }
   });
 
   // Enter 发送 AI 消息

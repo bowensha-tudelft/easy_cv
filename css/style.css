@@ -219,3 +219,11 @@ body {
 .modal { background: #fff; border-radius: 12px; padding: 18px; min-width: 300px; max-width: 90vw; max-height: 86vh; overflow-y: auto; }
 .modal h3 { margin: 0 0 12px; font-size: 15px; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+
+/* ============ 轻提示 ============ */
+.toast {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: rgba(17,24,39,.86); color: #fff; padding: 8px 16px;
+  border-radius: 8px; font-size: 13px; z-index: 500;
+  box-shadow: 0 4px 14px rgba(0,0,0,.2);
+}
