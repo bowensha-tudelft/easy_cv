@@ -111,6 +111,9 @@ function bindEvents() {
       case 'print': printPDF(); break;
       case 'import': $('#import-file').click(); break;
       case 'export': exportJSON('app'); break;
+      case 'dd-typst': showMenu($('#typstMenu'), p.getBoundingClientRect()); break;
+      case 'typst-source': downloadTypstSource(); hideMenus(); break;
+      case 'typst-pdf': exportTypstPDF(); hideMenus(); break;
       case 'theme': store.setTheme(p.dataset.theme); hideMenus(); break;
       case 'dd-theme': showMenu($('#themeMenu'), p.getBoundingClientRect()); break;
       case 'dd-color': syncAccentUI(); showMenu($('#colorMenu'), p.getBoundingClientRect()); break;
