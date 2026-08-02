@@ -124,17 +124,10 @@ body {
 .page.classic {
   --body-font: Georgia, "Times New Roman", "Noto Serif SC", "Songti SC", SimSun, serif;
   --head-font: Georgia, "Noto Serif SC", "Songti SC", SimSun, serif;
-  --accent: #1a3a5c;
 }
 .page.modern {
   --body-font: -apple-system, "Segoe UI", Roboto, "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
   --head-font: var(--body-font);
-  --accent: #0f766e;
-}
-.page.sidebar {
-  --body-font: -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
-  --head-font: var(--body-font);
-  --accent: #7c3aed;
 }
 .page { font-family: var(--body-font); }
 .page h1, .page h2, .page h3 { font-family: var(--head-font); color: var(--accent); margin: 0; }
@@ -174,8 +167,6 @@ body {
 .page .custom-meta { display: flex; justify-content: space-between; gap: 10px; font-size: 9.5pt; color: #555; }
 .page .custom-body p { margin: 4px 0; }
 .page .custom-body.two-col { columns: 2; column-gap: 8mm; }
-.page.sidebar { display: grid; grid-template-columns: 31% 69%; gap: 0 9mm; }
-.page .col-left .section-title:first-child { margin-top: 0; }
 
 /* ============ 打印 ============ */
 @page {
@@ -210,6 +201,29 @@ body {
 .modal { background: #fff; border-radius: 12px; padding: 18px; min-width: 300px; max-width: 90vw; max-height: 86vh; overflow-y: auto; }
 .modal h3 { margin: 0 0 12px; font-size: 15px; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+
+/* ============ 配色菜单 ============ */
+#colorMenu { min-width: 230px; }
+.color-swatches { display: flex; gap: 8px; padding: 10px 12px; }
+.swatch {
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 2px solid #fff; box-shadow: 0 0 0 1px var(--border);
+  cursor: pointer; padding: 0;
+}
+.swatch:hover { transform: scale(1.12); }
+.swatch.active { box-shadow: 0 0 0 2px var(--text); }
+.color-custom { display: flex; gap: 6px; align-items: center; padding: 0 12px 8px; }
+.color-custom input {
+  flex: 1; min-width: 0; padding: 5px 7px;
+  border: 1px solid var(--border); border-radius: 6px;
+  font: inherit; font-size: 12px; font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+.color-current {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 12px; font-size: 12px; color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+.color-current code { font-family: ui-monospace, Consolas, monospace; color: var(--text); }
 
 /* ============ 轻提示 ============ */
 .toast {

@@ -109,6 +109,10 @@ function bindEvents() {
       case 'export-strict': exportJSON('strict'); hideMenus(); break;
       case 'theme': store.setTheme(p.dataset.theme); hideMenus(); break;
       case 'dd-theme': showMenu($('#themeMenu'), p.getBoundingClientRect()); break;
+      case 'dd-color': syncAccentUI(); showMenu($('#colorMenu'), p.getBoundingClientRect()); break;
+      case 'accent-pick': store.setAccent(p.dataset.accent); syncAccentUI(); break;
+      case 'accent-apply': applyAccentInput(); break;
+      case 'accent-random': { const hex = randomAccent(); store.setAccent(hex); syncAccentUI(); showToast('随机配色 ' + hex); break; }
       case 'dd-export': showMenu($('#exportMenu'), p.getBoundingClientRect()); break;
       case 'dd-settings': openSettings(); break;
       case 'save-settings': saveSettings(); break;
@@ -118,6 +122,9 @@ function bindEvents() {
 
   // 导入文件
   $('#import-file').addEventListener('change', e => { if (e.target.files[0]) importJSONFile(e.target.files[0]); e.target.value = ''; });
+
+  // 配色输入框回车
+  $('#accent-input').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applyAccentInput(); } });
 
   // 快捷键
   document.addEventListener('keydown', e => {
@@ -137,9 +144,31 @@ function loadInitial() {
     if (raw) state = JSON.parse(raw);
   } catch (e) { /* 忽略 */ }
   if (!state) state = deepClone(SAMPLE);
+  if (!THEMES[state.theme]) state.theme = 'classic';
+  if (!isValidHex(state.accent)) state.accent = DEFAULT_ACCENT;
   // 块默认折叠（已有折叠状态则尊重）
   for (const b of state.blocks) if (typeof b.collapsed !== 'boolean') b.collapsed = true;
   return state;
+}
+
+/* ---- 配色菜单 ---- */
+function buildColorMenu() {
+  $('#color-swatches').innerHTML = ACCENT_PRESETS.map(p =>
+    '<button class="swatch" data-act="accent-pick" data-accent="' + p.hex + '" style="background:' + p.hex + '" title="' + p.name + '"></button>'
+  ).join('');
+}
+function syncAccentUI() {
+  const cur = normalizeAccent(store.state.accent);
+  $('#accent-input').value = cur;
+  $('#accent-current').textContent = cur;
+  document.querySelectorAll('#color-swatches .swatch').forEach(el => {
+    el.classList.toggle('active', String(el.dataset.accent).toLowerCase() === cur);
+  });
+}
+function applyAccentInput() {
+  const v = $('#accent-input').value.trim();
+  if (store.setAccent(v)) syncAccentUI();
+  else showToast('颜色格式不对，示例：#1a3a5c');
 }
 function buildAddMenu() {
   $('#addMenu').innerHTML = Object.keys(BLOCK_TYPES).map(k => {
@@ -149,6 +178,7 @@ function buildAddMenu() {
 }
 function boot() {
   buildAddMenu();
+  buildColorMenu();
   store = new StateStore(loadInitial());
   store.subscribe((state, kind) => {
     renderPreview(state);

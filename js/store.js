@@ -144,6 +144,12 @@ class StateStore {
     this.state.meta.dateFormat = fmt;
     this.commit(null, 'data');
   }
+  setAccent(hex) {
+    if (!isValidHex(hex)) return false;
+    this.state.accent = String(hex).toLowerCase();
+    this.commit(null, 'structure');
+    return true;
+  }
   applyPatch(patches) {
     try { for (const p of patches) JSONPatch.apply(this.state, p); }
     catch (err) { return { ok: false, error: String(err) }; }

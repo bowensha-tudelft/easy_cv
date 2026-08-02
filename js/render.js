@@ -14,17 +14,8 @@ function renderSequence(blocks, ctx) {
   }
   return html;
 }
-function renderBlocks(blocks, theme, ctx) {
-  if (theme.layout === 'sidebar') {
-    const left = blocks.filter(b => b.type === 'header' || b.type === 'skills' || b.type === 'education' || b.type === 'custom');
-    const right = blocks.filter(b => !left.includes(b));
-    return '<div class="col col-left">' + renderSequence(left, ctx) + '</div>'
-      + '<div class="col col-right">' + renderSequence(right, ctx) + '</div>';
-  }
-  return renderSequence(blocks, ctx);
-}
 function renderPreview(state) {
-  const theme = THEMES[state.theme] || THEMES.classic;
+  const themeKey = THEMES[state.theme] ? state.theme : 'classic';
   const fmt = (state.meta && state.meta.dateFormat) || 'MMM YYYY';
   const ctx = {
     esc: escapeHTML,
@@ -34,6 +25,6 @@ function renderPreview(state) {
     fmtDate: v => fmtDate(v, fmt),
     range: (s, e, c) => rangeText(s, e, c, fmt)
   };
-  const pageClass = state.theme + (theme.layout === 'sidebar' ? ' sidebar' : '');
-  $('#preview-pane').innerHTML = '<div class="page ' + pageClass + '">' + renderBlocks(state.blocks, theme, ctx) + '</div>';
+  const accent = normalizeAccent(state.accent);
+  $('#preview-pane').innerHTML = '<div class="page ' + themeKey + '" style="--accent:' + accent + '">' + renderSequence(state.blocks, ctx) + '</div>';
 }

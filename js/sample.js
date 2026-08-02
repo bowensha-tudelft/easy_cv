@@ -4,6 +4,7 @@
 const SAMPLE = {
   schemaVersion: 1,
   theme: 'classic',
+  accent: '#1a3a5c',
   meta: { dateFormat: 'MMM YYYY' },
   blocks: [
     { id: 'b_s1', type: 'header', data: {

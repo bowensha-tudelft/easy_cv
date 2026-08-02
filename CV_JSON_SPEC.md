@@ -29,7 +29,8 @@
 | 字段 | 类型 | 说明 |
 |---|---|---|
 | `schemaVersion` | number | 固定 `1` |
-| `theme` | string | `"classic"`（衬线）/ `"modern"`（无衬线）/ `"sidebar"`（双栏侧边） |
+| `theme` | string | `"classic"`（衬线）/ `"modern"`（无衬线）——只决定字体 |
+| `accent` | string | 主题色，`#RRGGBB`，如 `"#1a3a5c"`；预设/自定义/随机生成，独立于字体 |
 | `meta.dateFormat` | string | `"MMM YYYY"`（显示 `Jun 2022`）或 `"YYYY-MM"`（显示 `2022-06`） |
 | `blocks` | array | 块数组，见下 |
 
@@ -226,6 +227,7 @@ Patch 的**路径根是应用 JSON 对象本身**，一次提交一个 patch 数
 {
   "schemaVersion": 1,
   "theme": "classic",
+  "accent": "#1a3a5c",
   "meta": { "dateFormat": "MMM YYYY" },
   "blocks": [
     {

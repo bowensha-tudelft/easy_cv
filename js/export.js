@@ -84,6 +84,7 @@ function importJSONFile(file) {
       state.blocks = state.blocks || [];
       state.meta = state.meta || { dateFormat: 'MMM YYYY' };
       state.theme = THEMES[state.theme] ? state.theme : 'classic';
+      if (!isValidHex(state.accent)) state.accent = DEFAULT_ACCENT;
       store.setState(state);
     } catch (err) { alert('导入失败：' + err.message); }
   };

@@ -14,6 +14,7 @@
     <button class="btn" data-act="redo" id="btn-redo" title="重做 (Ctrl+Y)">↪ 重做</button>
     <span class="sep"></span>
     <button class="btn" data-act="dd-theme" id="btn-theme" title="主题">主题 ▾</button>
+    <button class="btn" data-act="dd-color" id="btn-color" title="配色">配色 ▾</button>
     <button class="btn" data-act="dd-settings" id="btn-settings" title="设置">⚙ 设置</button>
     <span class="spacer"></span>
     <button class="btn" data-act="import">导入 JSON</button>
@@ -38,7 +39,15 @@
 <div class="menu" id="themeMenu" hidden>
   <div class="menu-item" data-act="theme" data-theme="classic">经典（衬线）</div>
   <div class="menu-item" data-act="theme" data-theme="modern">现代（无衬线）</div>
-  <div class="menu-item" data-act="theme" data-theme="sidebar">双栏侧边（紧凑）</div>
+</div>
+<div class="menu" id="colorMenu" hidden>
+  <div class="color-swatches" id="color-swatches"></div>
+  <div class="color-custom">
+    <input type="text" id="accent-input" placeholder="#1a3a5c" spellcheck="false" autocomplete="off">
+    <button class="btn small" data-act="accent-apply">应用</button>
+  </div>
+  <div class="menu-item" data-act="accent-random">🎲 随机配色</div>
+  <div class="color-current"><span>当前色号</span><code id="accent-current">#1a3a5c</code></div>
 </div>
 <div class="menu" id="exportMenu" hidden>
   <div class="menu-item" data-act="export-app">⬇ 应用 JSON（完整往返）</div>

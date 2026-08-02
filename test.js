@@ -91,11 +91,21 @@ const tests = `
   assert(Array.isArray(back.blocks) && back.blocks.length > 0, 'fromStrict 生成块');
   assert(back.blocks.some(b => b.type === 'header' && b.data.name.includes('林晓')), 'fromStrict 保留姓名');
 
-  // 5. 主题：sidebar 双栏
+  // 5. 主题切换：经典 / 现代（无双栏）
   store.setState(deepClone(SAMPLE));
-  store.setTheme('sidebar');
-  const sp = els['#preview-pane'].innerHTML;
-  assert(sp.includes('col-left') && sp.includes('col-right'), 'sidebar 渲染两栏');
+  store.setTheme('modern');
+  assert(store.state.theme === 'modern', 'setTheme 生效');
+  assert(els['#preview-pane'].innerHTML.includes('page modern'), 'modern 应用到预览');
+  store.setTheme('classic');
+  assert(store.state.theme === 'classic', '切回 classic');
+
+  // 5b. 配色：预设 / 自定义 / 非法
+  assert(store.setAccent('#ff0000') === true, 'setAccent 有效色');
+  assert(store.state.accent === '#ff0000', 'accent 写入 state');
+  assert(els['#preview-pane'].innerHTML.includes('--accent:#ff0000'), '预览应用 accent');
+  assert(store.setAccent('red') === false, 'setAccent 拒绝非法色');
+  assert(store.state.accent === '#ff0000', '非法色不改变状态');
+  store.setAccent('#1a3a5c');
 
   // 6. 数据不被 localStorage 污染
   assert(store.state.blocks.every(b => b.id && b.type), '所有块有 id 和 type');
