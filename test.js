@@ -99,13 +99,18 @@ const tests = `
   store.setTheme('classic');
   assert(store.state.theme === 'classic', '切回 classic');
 
-  // 5b. 配色：预设 / 自定义 / 非法
-  assert(store.setAccent('#ff0000') === true, 'setAccent 有效色');
-  assert(store.state.accent === '#ff0000', 'accent 写入 state');
-  assert(els['#preview-pane'].innerHTML.includes('--accent:#ff0000'), '预览应用 accent');
+  // 5b. 配色：parser 支持 hex/rgb，非法拒绝，随机为真随机
+  assert(parseColor('#abc') === '#aabbcc', 'parseColor #RGB 展开');
+  assert(parseColor('rgb(255, 0, 0)') === '#ff0000', 'parseColor rgb 整数');
+  assert(parseColor('rgb(100%, 0%, 50%)') === '#ff0080', 'parseColor rgb 百分比');
+  assert(parseColor('red') === null, 'parseColor 拒绝非法名');
+  assert(store.setAccent('rgb(0, 128, 0)') === true, 'setAccent 接受 rgb');
+  assert(store.state.accent === '#008000', 'rgb 归一化为 hex');
+  assert(els['#preview-pane'].innerHTML.includes('--accent:#008000'), '预览应用 accent');
   assert(store.setAccent('red') === false, 'setAccent 拒绝非法色');
-  assert(store.state.accent === '#ff0000', '非法色不改变状态');
-  store.setAccent('#1a3a5c');
+  assert(store.state.accent === '#008000', '非法色不改变状态');
+  assert(isValidHex(randomAccent()) && isValidHex(randomAccent()), '随机配色是合法 hex');
+  store.setAccent('#1f3864');
 
   // 6. 数据不被 localStorage 污染
   assert(store.state.blocks.every(b => b.id && b.type), '所有块有 id 和 type');

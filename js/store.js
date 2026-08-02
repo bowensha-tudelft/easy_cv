@@ -144,9 +144,10 @@ class StateStore {
     this.state.meta.dateFormat = fmt;
     this.commit(null, 'data');
   }
-  setAccent(hex) {
-    if (!isValidHex(hex)) return false;
-    this.state.accent = String(hex).toLowerCase();
+  setAccent(color) {
+    const hex = parseColor(color);
+    if (!hex) return false;
+    this.state.accent = hex;
     this.commit(null, 'structure');
     return true;
   }

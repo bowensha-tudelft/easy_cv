@@ -30,7 +30,7 @@
 |---|---|---|
 | `schemaVersion` | number | 固定 `1` |
 | `theme` | string | `"classic"`（衬线）/ `"modern"`（无衬线）——只决定字体 |
-| `accent` | string | 主题色，`#RRGGBB`，如 `"#1a3a5c"`；预设/自定义/随机生成，独立于字体 |
+| `accent` | string | 主题色，存为 `#RRGGBB`；解析器也接受 `#RGB`、`rgb(r,g,b)`（整数或百分比），统一归一化为 hex；独立于字体 |
 | `meta.dateFormat` | string | `"MMM YYYY"`（显示 `Jun 2022`）或 `"YYYY-MM"`（显示 `2022-06`） |
 | `blocks` | array | 块数组，见下 |
 

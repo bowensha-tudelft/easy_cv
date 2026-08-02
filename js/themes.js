@@ -7,12 +7,13 @@ const THEMES = {
   modern:  { label: '现代（无衬线）' }
 };
 
+// 5 个专业简历配色（来自调研：藏青/青绿/墨绿/酒红/深紫）
 const ACCENT_PRESETS = [
-  { hex: '#1a3a5c', name: '藏青' },
-  { hex: '#0f766e', name: '青绿' },
-  { hex: '#7c3aed', name: '紫' },
-  { hex: '#be123c', name: '玫红' },
-  { hex: '#b45309', name: '琥珀' }
+  { hex: '#1F3864', name: '藏青' },
+  { hex: '#168F8B', name: '青绿' },
+  { hex: '#1E4D2B', name: '墨绿' },
+  { hex: '#6E1F2E', name: '酒红' },
+  { hex: '#4A2C5A', name: '深紫' }
 ];
 
-const DEFAULT_ACCENT = '#1a3a5c';
+const DEFAULT_ACCENT = '#1f3864';

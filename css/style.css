@@ -203,7 +203,7 @@ body {
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
 
 /* ============ 配色菜单 ============ */
-#colorMenu { min-width: 230px; }
+#colorMenu { min-width: 250px; }
 .color-swatches { display: flex; gap: 8px; padding: 10px 12px; }
 .swatch {
   width: 26px; height: 26px; border-radius: 50%;

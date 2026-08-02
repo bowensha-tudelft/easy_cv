@@ -112,6 +112,7 @@ function bindEvents() {
       case 'dd-color': syncAccentUI(); showMenu($('#colorMenu'), p.getBoundingClientRect()); break;
       case 'accent-pick': store.setAccent(p.dataset.accent); syncAccentUI(); break;
       case 'accent-apply': applyAccentInput(); break;
+      case 'accent-add': addCustomColor(); break;
       case 'accent-random': { const hex = randomAccent(); store.setAccent(hex); syncAccentUI(); showToast('随机配色 ' + hex); break; }
       case 'dd-export': showMenu($('#exportMenu'), p.getBoundingClientRect()); break;
       case 'dd-settings': openSettings(); break;
@@ -152,10 +153,22 @@ function loadInitial() {
 }
 
 /* ---- 配色菜单 ---- */
+function getCustomColors() {
+  try {
+    const raw = localStorage.getItem('easy_cv.custom_colors');
+    if (raw) { const arr = JSON.parse(raw); if (Array.isArray(arr)) return arr.filter(isValidHex); }
+  } catch (e) { /* 忽略 */ }
+  return [];
+}
+function saveCustomColors(arr) {
+  try { localStorage.setItem('easy_cv.custom_colors', JSON.stringify(arr)); } catch (e) { /* 忽略 */ }
+}
+function swatchHTML(hex) {
+  return '<button class="swatch" data-act="accent-pick" data-accent="' + hex + '" style="background:' + hex + '" title="' + hex + '"></button>';
+}
 function buildColorMenu() {
-  $('#color-swatches').innerHTML = ACCENT_PRESETS.map(p =>
-    '<button class="swatch" data-act="accent-pick" data-accent="' + p.hex + '" style="background:' + p.hex + '" title="' + p.name + '"></button>'
-  ).join('');
+  const hexes = ACCENT_PRESETS.map(p => p.hex).concat(getCustomColors());
+  $('#color-swatches').innerHTML = hexes.map(swatchHTML).join('');
 }
 function syncAccentUI() {
   const cur = normalizeAccent(store.state.accent);
@@ -166,9 +179,19 @@ function syncAccentUI() {
   });
 }
 function applyAccentInput() {
-  const v = $('#accent-input').value.trim();
-  if (store.setAccent(v)) syncAccentUI();
-  else showToast('颜色格式不对，示例：#1a3a5c');
+  const hex = parseColor($('#accent-input').value.trim());
+  if (!hex) { showToast('颜色格式：支持 #RRGGBB / #RGB / rgb(r,g,b)'); return; }
+  store.setAccent(hex);
+  syncAccentUI();
+}
+function addCustomColor() {
+  const hex = parseColor($('#accent-input').value.trim());
+  if (!hex) { showToast('颜色格式：支持 #RRGGBB / #RGB / rgb(r,g,b)'); return; }
+  const custom = getCustomColors();
+  if (!custom.includes(hex)) { custom.push(hex); saveCustomColors(custom); }
+  buildColorMenu();
+  syncAccentUI();
+  showToast('已添加 ' + hex);
 }
 function buildAddMenu() {
   $('#addMenu').innerHTML = Object.keys(BLOCK_TYPES).map(k => {

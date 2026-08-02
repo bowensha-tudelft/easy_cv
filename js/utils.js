@@ -100,7 +100,27 @@ function icon(name, cls) {
 
 /* ---- 主题色（accent）工具 ---- */
 function isValidHex(v) { return /^#[0-9a-fA-F]{6}$/.test(String(v || '')); }
-function normalizeAccent(v) { return isValidHex(v) ? String(v).toLowerCase() : DEFAULT_ACCENT; }
+// 统一解析：接受 #RGB / #RRGGBB / rgb(r,g,b)（整数或百分比），归一化为 #rrggbb
+function parseColor(str) {
+  const s = String(str == null ? '' : str).trim().toLowerCase();
+  if (!s) return null;
+  if (s.startsWith('#')) {
+    let h = s.slice(1);
+    if (/^[0-9a-f]{3}$/.test(h)) h = h.split('').map(c => c + c).join('');
+    if (/^[0-9a-f]{6}$/.test(h)) return '#' + h;
+    if (/^[0-9a-f]{8}$/.test(h)) return '#' + h.slice(0, 6);
+    return null;
+  }
+  const m = s.match(/^rgb\(\s*([\d.]+%?)\s*,\s*([\d.]+%?)\s*,\s*([\d.]+%?)\s*\)$/);
+  if (m) {
+    const to255 = v => v.endsWith('%') ? Math.round(parseFloat(v) / 100 * 255) : Math.round(parseFloat(v));
+    const vals = [m[1], m[2], m[3]].map(to255);
+    if (vals.every(v => v >= 0 && v <= 255)) return '#' + vals.map(v => v.toString(16).padStart(2, '0')).join('');
+    return null;
+  }
+  return null;
+}
+function normalizeAccent(v) { return parseColor(v) || DEFAULT_ACCENT; }
 function hslToHex(h, s, l) {
   s /= 100; l /= 100;
   const k = n => (n + h / 30) % 12;
