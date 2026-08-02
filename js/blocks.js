@@ -23,10 +23,11 @@ function educationRender(b, ctx) {
   const head = [d.degree, d.area ? 'in ' + d.area : ''].filter(Boolean).join(' ');
   const org = [d.institution, d.location].filter(Boolean).join(' · ');
   return '<div class="entry">'
-    + '<div class="entry-head"><div>'
+    + '<div class="entry-head">'
     + (head ? '<h3>' + esc(head) + '</h3>' : '')
+    + '<div class="dates">' + ctx.range(d.startDate, d.endDate, d.current) + '</div>'
+    + '</div>'
     + (org ? '<div class="org">' + esc(org) + '</div>' : '')
-    + '</div><div class="dates">' + ctx.range(d.startDate, d.endDate, d.current) + '</div></div>'
     + (d.score ? '<p class="score">GPA: ' + esc(d.score) + '</p>' : '')
     + ((d.courses || []).length ? '<div class="tags-line">' + d.courses.map(c => '<span class="ptag">' + esc(c) + '</span>').join('') + '</div>' : '')
     + ((d.highlights || []).length ? '<ul>' + d.highlights.map(h => '<li>' + ctx.inline(h) + '</li>').join('') + '</ul>' : '')
@@ -36,10 +37,11 @@ function experienceRender(b, ctx) {
   const d = b.data, esc = ctx.esc;
   const org = [d.organization, d.location].filter(Boolean).join(' · ');
   return '<div class="entry">'
-    + '<div class="entry-head"><div>'
+    + '<div class="entry-head">'
     + (d.position ? '<h3>' + esc(d.position) + '</h3>' : '')
+    + '<div class="dates">' + ctx.range(d.startDate, d.endDate, d.current) + '</div>'
+    + '</div>'
     + (org ? '<div class="org">' + esc(org) + (d.url ? ' · <a href="' + esc(d.url) + '" target="_blank" rel="noopener">' + esc(d.url) + '</a>' : '') + '</div>' : '')
-    + '</div><div class="dates">' + ctx.range(d.startDate, d.endDate, d.current) + '</div></div>'
     + (d.summary ? '<p>' + ctx.inline(d.summary) + '</p>' : '')
     + ((d.highlights || []).length ? '<ul>' + d.highlights.map(h => '<li>' + ctx.inline(h) + '</li>').join('') + '</ul>' : '')
     + '</div>';
@@ -47,10 +49,11 @@ function experienceRender(b, ctx) {
 function projectsRender(b, ctx) {
   const d = b.data, esc = ctx.esc;
   return '<div class="entry">'
-    + '<div class="entry-head"><div>'
+    + '<div class="entry-head">'
     + (d.name ? '<h3>' + esc(d.name) + '</h3>' : '')
+    + '<div class="dates">' + ctx.range(d.startDate, d.endDate, d.current) + '</div>'
+    + '</div>'
     + ((d.roles || []).length ? '<div class="org">' + d.roles.map(esc).join(', ') + '</div>' : '')
-    + '</div><div class="dates">' + ctx.range(d.startDate, d.endDate, d.current) + '</div></div>'
     + (d.description ? '<p>' + ctx.inline(d.description) + '</p>' : '')
     + (d.url ? '<div class="org"><a href="' + esc(d.url) + '" target="_blank" rel="noopener">' + esc(d.url) + '</a></div>' : '')
     + ((d.keywords || []).length ? '<div class="tags-line">' + d.keywords.map(k => '<span class="ptag">' + esc(k) + '</span>').join('') + '</div>' : '')

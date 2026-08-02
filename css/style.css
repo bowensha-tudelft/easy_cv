@@ -147,9 +147,9 @@ body {
   border-bottom: 1px solid #ccc; padding-bottom: 3px; margin: 15px 0 8px;
 }
 .page .entry { margin-bottom: 9px; }
-.page .entry-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.page .entry-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; }
 .page .entry h3 { font-size: 10.5pt; color: #111; display: inline; }
-.page .entry .org { font-size: 9.5pt; color: #444; text-wrap: balance; }
+.page .entry .org { font-size: 9.5pt; color: #444; }
 .page .dates { font-size: 9.5pt; color: #555; white-space: nowrap; }
 .page .entry p { margin: 2px 0; font-size: 10pt; }
 .page .score { font-size: 9.5pt; color: #444; }
