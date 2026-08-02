@@ -110,8 +110,7 @@ function bindEvents() {
       case 'redo': store.redo(); break;
       case 'print': printPDF(); break;
       case 'import': $('#import-file').click(); break;
-      case 'export-app': exportJSON('app'); hideMenus(); break;
-      case 'export-strict': exportJSON('strict'); hideMenus(); break;
+      case 'export': exportJSON('app'); break;
       case 'theme': store.setTheme(p.dataset.theme); hideMenus(); break;
       case 'dd-theme': showMenu($('#themeMenu'), p.getBoundingClientRect()); break;
       case 'dd-color': syncAccentUI(); showMenu($('#colorMenu'), p.getBoundingClientRect()); break;
@@ -120,7 +119,6 @@ function bindEvents() {
       case 'swatch-edit': startEditSwatch(swatchMenuHex); break;
       case 'swatch-del': removeCustomColor(swatchMenuHex); hideMenus(); showToast('已删除 ' + swatchMenuHex); break;
       case 'accent-random': { const hex = randomAccent(); store.setAccent(hex); syncAccentUI(); showToast('随机配色 ' + hex); break; }
-      case 'dd-export': showMenu($('#exportMenu'), p.getBoundingClientRect()); break;
       case 'dd-settings': openSettings(); break;
       case 'save-settings': saveSettings(); break;
       case 'close-settings': closeSettings(); break;
@@ -132,6 +130,11 @@ function bindEvents() {
 
   // 配色输入框回车：编辑模式保存修改，否则应用为主题色
   $('#accent-input').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); editingSwatch ? addCustomColor() : applyAccentInput(); } });
+
+  // 打印提示：浏览器自带的页眉/页脚无法用 CSS 去除，需在打印对话框取消勾选
+  window.addEventListener('beforeprint', () => {
+    showToast('打印时请取消勾选「页眉和页脚」，否则会带出日期和页面标题');
+  });
 
   // 自定义色块：右键弹出修改/删除菜单
   $('#color-swatches').addEventListener('contextmenu', e => {

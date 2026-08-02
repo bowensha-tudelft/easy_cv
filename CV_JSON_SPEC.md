@@ -204,7 +204,7 @@ Patch 的**路径根是应用 JSON 对象本身**，一次提交一个 patch 数
 
 ## 6. 与 JSON Resume 的映射
 
-「导出 → JSON Resume（严格）」调用 `toStrict()`，把应用 JSON 转成 jsonresume.org 标准：
+`JSONResume.toStrict()` 把应用 JSON 转成 jsonresume.org 标准（已不再提供严格导出按钮，映射仍用于内部与导入兼容）：
 
 | 块类型 | 应用字段 → | JSON Resume |
 |---|---|---|

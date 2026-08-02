@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
 <meta charset="utf-8">
-<title>Easy CV — 简历块编辑器</title>
+<title>Easy CV</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -17,8 +17,8 @@
     <button class="btn" data-act="dd-color" id="btn-color" title="配色">配色 ▾</button>
     <button class="btn" data-act="dd-settings" id="btn-settings" title="设置">⚙ 设置</button>
     <span class="spacer"></span>
-    <button class="btn" data-act="import">导入 JSON</button>
-    <button class="btn" data-act="dd-export" id="btn-export">导出 ▾</button>
+    <button class="btn" data-act="import">导入</button>
+    <button class="btn" data-act="export" id="btn-export">导出</button>
     <button class="btn primary" data-act="print" title="Ctrl+P">打印 / 导出 PDF</button>
   </header>
 
@@ -52,10 +52,6 @@
 <div class="menu" id="swatchMenu" hidden>
   <div class="menu-item" data-act="swatch-edit">✎ 修改颜色</div>
   <div class="menu-item danger" data-act="swatch-del">✕ 删除</div>
-</div>
-<div class="menu" id="exportMenu" hidden>
-  <div class="menu-item" data-act="export-app">⬇ 应用 JSON（完整往返）</div>
-  <div class="menu-item" data-act="export-strict">⬇ JSON Resume（严格）</div>
 </div>
 <div class="menu" id="addMenu" hidden></div>
 <div class="menu" id="blockMenu" hidden>

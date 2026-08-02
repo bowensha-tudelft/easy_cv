@@ -24,7 +24,7 @@ global.document = {
   addEventListener() {}, createElement() { return fakeEl(); },
   body: fakeEl()
 };
-global.window = { innerWidth: 1400, innerHeight: 900, print() {} };
+global.window = { innerWidth: 1400, innerHeight: 900, print() {}, addEventListener() {} };
 global.alert = (m) => { throw new Error('alert called: ' + m); };
 global.localStorage = {
   _d: {},

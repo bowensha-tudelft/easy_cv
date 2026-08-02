@@ -12,8 +12,8 @@
    - A4 尺寸、页脚页码（Chrome/Edge；Firefox 无页码属预期）
    - 多页时断页不截断块、中文正常
 7. **持久化**：刷新页面 → 草稿从 localStorage 恢复。
-8. **JSON 往返**：`导出 ▾ → 应用 JSON` → 新浏览器 profile `导入 JSON` → 内容一致。
-9. **严格导出**：`导出 ▾ → JSON Resume（严格）` → 用 jsonresume.org schema 校验。
+8. **JSON 往返**：`导出` → 新浏览器 profile `导入` → 内容一致。
+9. **打印干净**：打印时取消勾选「页眉和页脚」，PDF 不带日期/页面标题。
 
 ## v1.1（AI 聊天 UI + 本地占位）
 
