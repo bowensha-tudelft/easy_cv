@@ -32,6 +32,14 @@ global.localStorage = {
   setItem(k, v) { this._d[k] = String(v); },
   removeItem(k) { delete this._d[k]; }
 };
+// FileReader 桩：同步喂回 JSON 内容（用于测试导入）
+global.FileReader = function () {
+  this.result = '';
+  this.readAsText = function (file) {
+    this.result = '{"schemaVersion":1,"theme":"classic","accent":"#1f3864","meta":{"dateFormat":"MMM YYYY"},"blocks":[]}';
+    if (this.onload) this.onload();
+  };
+};
 
 /* ---- 拼接全部模块 + 测试代码，一次性 eval（共享作用域） ---- */
 const order = ['utils', 'blocks', 'themes', 'store', 'render', 'editor', 'export', 'sample', 'boot'];
@@ -151,6 +159,22 @@ const tests = `
 
   // 7. 数据不被 localStorage 污染
   assert(store.state.blocks.every(b => b.id && b.type), '所有块有 id 和 type');
+
+  // 8. 导入新 JSON 后清空旧保存句柄（防止 Ctrl+S 写回旧文件覆盖真简历）
+  savedFileHandle = { fake: 'old-handle' };
+  importedFileName = null;
+  importJSONFile({ name: 'imported-resume.JSON' });
+  assert(importedFileName === 'imported-resume.json', '导入文件名规范化为 .json');
+  assert(savedFileHandle === null, '导入后清空内存保存句柄');
+  assert(store.state.blocks.length === 0, '导入替换当前状态');
+
+  // 8b. 工具栏显示 Ctrl+S 保存目标（有句柄显文件名 / 无句柄提示另存为）
+  savedFileHandle = { name: 'BowenSha-import.json', fake: true };
+  await refreshSaveTarget();
+  assert(els['#save-target'].textContent === '保存到 BowenSha-import.json', '有句柄时显示保存文件名');
+  savedFileHandle = null;
+  await refreshSaveTarget();
+  assert(els['#save-target'].textContent.includes('另存为'), '无句柄时提示 Ctrl+S 另存为');
 
   console.log('ALL SMOKE TESTS PASSED ✅  (' + store.state.blocks.length + ' blocks)');
 })().catch(e => { console.error('FAIL ❌'); console.error(e.stack || e); process.exit(1); });

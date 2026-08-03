@@ -251,6 +251,7 @@ function buildAddMenu() {
 function boot() {
   buildAddMenu();
   buildColorMenu();
+  refreshSaveTarget(); // 工具栏提示当前 Ctrl+S 保存位置
   store = new StateStore(loadInitial());
   store.subscribe((state, kind) => {
     renderPreview(state);

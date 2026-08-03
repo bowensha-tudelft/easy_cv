@@ -89,6 +89,10 @@ function importJSONFile(file) {
       state.theme = THEMES[state.theme] ? state.theme : 'classic';
       if (!isValidHex(state.accent)) state.accent = DEFAULT_ACCENT;
       store.setState(state);
+      // 导入新文件后清掉旧保存句柄：Ctrl+S 不再写回老文件，而是「另存为」（建议用导入的文件名）
+      importedFileName = file.name.replace(/\.json$/i, '') + '.json';
+      clearSavedHandle();
+      showToast('已导入，Ctrl+S 将另存为新文件');
     } catch (err) { alert('导入失败：' + err.message); }
   };
   r.readAsText(file);
@@ -144,6 +148,33 @@ async function fsSaveHandle(h) {
   } catch (e) { /* 忽略，保存失败就每次询问 */ }
 }
 let savedFileHandle = null;
+let importedFileName = null; // 最近导入的 JSON 文件名，Ctrl+S 另存时作为建议文件名
+
+async function fsClearHandle() {
+  try {
+    const db = await idbOpen();
+    await new Promise((res, rej) => {
+      const tx = db.transaction('handles', 'readwrite');
+      tx.objectStore('handles').delete('app');
+      tx.oncomplete = res;
+      tx.onerror = () => rej(tx.error);
+    });
+  } catch (e) { /* 忽略 */ }
+}
+// 清空记忆的保存位置（内存 + IndexedDB），让下次 Ctrl+S 走「另存为」
+async function clearSavedHandle() {
+  savedFileHandle = null;
+  await fsClearHandle();
+  refreshSaveTarget();
+}
+// 工具栏提示：Ctrl+S 会写到哪里（用户能看到，避免覆盖错文件）
+async function refreshSaveTarget() {
+  const h = savedFileHandle || await fsLoadHandle();
+  const el = $('#save-target');
+  if (!el) return;
+  el.textContent = h && h.name ? ('保存到 ' + h.name) : '未保存 · Ctrl+S 另存为';
+  el.title = h && h.name ? ('Ctrl+S 保存到：' + h.name) : '尚未选择保存文件';
+}
 async function saveJSONFile() {
   const json = JSON.stringify(store.state, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
@@ -153,7 +184,7 @@ async function saveJSONFile() {
       if (!handle) {
         // 首次：让用户选一次保存位置（建议项目文件夹，可重命名为 easy-cv.json）
         handle = await window.showSaveFilePicker({
-          suggestedName: 'easy-cv.json',
+          suggestedName: importedFileName || 'easy-cv.json',
           types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
         });
         savedFileHandle = handle;
@@ -162,7 +193,9 @@ async function saveJSONFile() {
       const w = await handle.createWritable();
       await w.write(blob);
       await w.close();
-      showToast('已保存 easy-cv.json（Ctrl+S 继续自动保存到此文件）');
+      savedFileHandle = handle;
+      refreshSaveTarget();
+      showToast('已保存 ' + (handle.name || 'easy-cv.json') + '（Ctrl+S 继续自动保存到此文件）');
       return;
     }
   } catch (err) {
