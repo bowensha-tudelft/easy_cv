@@ -1,0 +1,23 @@
+{
+  "skill_name": "convert-cv-to-easycv",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我在 Downloads 里有个简历 PDF（resume.pdf），帮我转成 easy_cv 能导入的 JSON。",
+      "expected_output": "生成一个 easy-cv 应用格式的 .json 文件（含 blocks 数组），可被 easy_cv 的导入按钮读取。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "把这份 Word 简历（cv.docx）转成 easy_cv 的 JSON 格式，存成 json 文件给我。",
+      "expected_output": "解析 docx 内容，输出 easy-cv 格式 JSON，块类型映射正确（header/education/work/research/skills/custom）。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "这是我 GitHub 上的简历 markdown，帮我做成 easy_cv 的 JSON。",
+      "expected_output": "从 markdown 提取信息，输出 easy-cv 格式 JSON，字段名与 CV_JSON_SPEC.md 一致。",
+      "files": []
+    }
+  ]
+}

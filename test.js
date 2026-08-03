@@ -44,10 +44,10 @@ const tests = `
 
   // 1. 启动后预览渲染出示例 CV
   const preview = els['#preview-pane'].innerHTML;
-  assert(preview.includes('林晓'), 'preview 应包含姓名');
-  assert(preview.includes('Alibaba Cloud'), 'preview 应包含公司');
-  assert(preview.includes('Work Experience'), 'preview 应有 Work Experience 标题');
+  assert(preview.includes('Bowen Sha'), 'preview 应包含姓名');
+  assert(preview.includes('Massachusetts Institute of Technology'), 'preview 应包含学校');
   assert(preview.includes('Research Experience'), 'preview 应有 Research Experience 标题');
+  assert(preview.includes('Selected Publications'), 'preview 应有 Publications 标题');
   assert(preview.includes('cv-links'), 'preview 应包含链接行');
   assert(store.state.blocks.every(b => b.collapsed === true), '块默认折叠');
 
@@ -98,11 +98,11 @@ const tests = `
 
   // 4. JSON Resume 往返
   const strict = JSONResume.toStrict(store.state);
-  assert(strict.basics && strict.basics.name === '林晓 (Xiao Lin)', 'toStrict basics.name');
+  assert(strict.basics && strict.basics.name === 'Bowen Sha', 'toStrict basics.name');
   assert(strict.work.length >= 2, 'toStrict work 数量');
   const back = JSONResume.fromStrict(strict);
   assert(Array.isArray(back.blocks) && back.blocks.length > 0, 'fromStrict 生成块');
-  assert(back.blocks.some(b => b.type === 'header' && b.data.name.includes('林晓')), 'fromStrict 保留姓名');
+  assert(back.blocks.some(b => b.type === 'header' && b.data.name.includes('Bowen')), 'fromStrict 保留姓名');
 
   // 5. 主题切换：经典 / 现代（无双栏）
   store.setState(deepClone(SAMPLE));
@@ -140,7 +140,7 @@ const tests = `
   assert(editingSwatch === null, '编辑模式结束');
 
   // 6. bullets 行编辑器（+ 添加 / 编辑 / 删除，类似添加链接）
-  const expId = store.state.blocks.find(b => b.type === 'work').id;
+  const expId = store.state.blocks.find(b => b.type === 'research').id;
   store.setField(expId, 'highlights', ['a', 'b']);
   addBullet(expId, 'highlights');
   assert(store.state.blocks.find(b => b.id === expId).data.highlights.length === 3, 'addBullet 添加空行');
