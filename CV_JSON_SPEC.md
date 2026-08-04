@@ -56,7 +56,7 @@
 
 ## 3. 块类型与 `data` 字段
 
-字段类型说明：`text`=字符串；`month`=`"YYYY-MM"` 字符串（可空）；`textarea`=字符串（可含换行）；`bullets`=字符串数组（一项一条）；`tags`=字符串数组；`checkbox`=布尔；`links`=对象数组（见 header）；`select`=固定枚举。
+字段类型说明：`text`=字符串；`month`=`"YYYY-MM"` 字符串（可空）；`textarea`=字符串（可含换行）；`bullets`=字符串数组（一项一条）；`tags`=字符串数组（chip，回车添加）；`list`=字符串数组（编辑器里每行一条可编辑）；`checkbox`=布尔；`links`=对象数组（见 header）；`select`=固定枚举。
 
 ### 3.1 `header` —— 个人信息（渲染在顶部，无小节标题）
 
@@ -92,7 +92,7 @@
 | `endDate` | month | 结束；`current=true` 时应为空 |
 | `current` | checkbox | 在读中 |
 | `score` | text | GPA/成绩，可选 |
-| `courses` | tags | 课程列表 |
+| `courses` | list | 课程列表（编辑器里每行一门，可编辑） |
 | `highlights` | bullets | 亮点 |
 
 ### 3.3 `work` / `research` —— 工作经历 / 研究经历（小节标题 Work Experience / Research Experience）
@@ -132,9 +132,7 @@
 | 字段 | 类型 | 说明 |
 |---|---|---|
 | `name` | text | 技能组名，如 `"Programming Languages"` |
-| `keywords` | tags | 技能项 |
-| `level` | text | 熟练度，可选 |
-| `showLevel` | checkbox | 为 true 时渲染 `· 熟练度` |
+| `keywords` | list | 技能项（字符串数组；编辑器里每行一条可编辑。**没有熟练度字段**，熟练度直接写进内容，如 `"Python (Advanced)"`） |
 
 ### 3.6 `custom` —— 自定义（字段完全继承 `work`/`research`，另加一个 `title` 小节标题）
 
@@ -150,7 +148,7 @@
 ## 4. 值格式约定（容易出错处）
 
 1. **日期**一定是 `"YYYY-MM"` 字符串（如 `"2022-06"`）；`current=true` 时 `endDate` 写空字符串 `""`。
-2. `bullets` / `tags` 都是字符串数组；空就写 `[]`。
+2. `bullets` / `list` / `tags` 都是字符串数组；空就写 `[]`。
 3. `links` 必须每项有 `id`、`icon`、`url`。
 4. 布尔字段 `current`、`showLevel`、`visible` 为 `true`/`false`。
 5. 不要把 `custom` 的 `body` 写成 HTML——只用它的轻量标记语法。

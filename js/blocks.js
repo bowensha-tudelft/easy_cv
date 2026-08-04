@@ -67,7 +67,6 @@ function skillsRender(b, ctx) {
   const d = b.data, esc = ctx.esc;
   return '<div class="skill-row"><span class="skill-name">' + esc(d.name) + '</span>'
     + ((d.keywords || []).length ? ': ' + d.keywords.map(esc).join(', ') : '')
-    + (d.showLevel && d.level ? ' <span class="skill-level">· ' + esc(d.level) + '</span>' : '')
     + '</div>';
 }
 function customRender(b, ctx) {
@@ -102,7 +101,7 @@ const BLOCK_TYPES = {
       { key: 'endDate', label: '结束', type: 'month', inline: true },
       { key: 'current', label: '在读中', type: 'checkbox' },
       { key: 'score', label: 'GPA / 成绩', type: 'text' },
-      { key: 'courses', label: '课程', type: 'tags' },
+      { key: 'courses', label: '课程（每行一门）', type: 'bullets' },
       { key: 'highlights', label: '亮点', type: 'bullets' }
     ],
     renderHTML: educationRender
@@ -157,12 +156,10 @@ const BLOCK_TYPES = {
   },
   skills: {
     key: 'skills', label: '技能', icon: 'zap', sectionTitle: 'Skills',
-    defaults: () => ({ name: '', keywords: [], level: '', showLevel: false }),
+    defaults: () => ({ name: '', keywords: [] }),
     fields: [
       { key: 'name', label: '技能组名', type: 'text' },
-      { key: 'keywords', label: '技能（回车添加）', type: 'tags' },
-      { key: 'level', label: '熟练度', type: 'text' },
-      { key: 'showLevel', label: '显示熟练度', type: 'checkbox' }
+      { key: 'keywords', label: '技能（每行一条，熟练度直接写进内容，如 "Python (Advanced)"）', type: 'bullets' }
     ],
     renderHTML: skillsRender
   },

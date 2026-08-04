@@ -194,6 +194,18 @@ const tests = `
   assert(ph9.includes('TA A') && ph9.includes('TA B'), '同标题两个块内容都在');
   assert(ph9.includes('Award 1') && ph9.includes('No title'), '其他块内容都在');
 
+  // 10. 技能块：无熟练度字段；keywords 用行式编辑（同职责 UI）
+  const skId = store.addBlock('skills');
+  const skBlk = store.state.blocks.find(b => b.id === skId);
+  assert(!('level' in skBlk.data) && !('showLevel' in skBlk.data), '技能块默认无 level/showLevel');
+  store.setField(skId, 'keywords', ['Python', 'C++']);
+  const kwField = fieldHTML(skBlk, BLOCK_TYPES.skills.fields.find(f => f.key === 'keywords'));
+  assert(kwField.includes('data-bl="0"') && kwField.includes('addbullet'), '技能项用行式编辑 UI（同职责）');
+  store.setField(skId, 'name', 'Lang');
+  renderPreview(store.state);
+  const ph10 = els['#preview-pane'].innerHTML;
+  assert(ph10.includes('Lang') && ph10.includes('Python, C++'), '技能组名与技能项渲染');
+
   console.log('ALL SMOKE TESTS PASSED ✅  (' + store.state.blocks.length + ' blocks)');
 })().catch(e => { console.error('FAIL ❌'); console.error(e.stack || e); process.exit(1); });
 `;

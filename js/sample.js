@@ -116,10 +116,10 @@ const SAMPLE = {
         ]
       }
     },
-    { id: 'b_f10', type: 'skills', collapsed: true, data: { name: 'Programming', keywords: ['Python', 'PyTorch', 'C++', 'Shell'], level: '', showLevel: false } },
-    { id: 'b_f11', type: 'skills', collapsed: true, data: { name: 'Simulation', keywords: ['Gaussian', 'ORCA', 'VASP', 'LAMMPS', 'GROMACS'], level: '', showLevel: false } },
-    { id: 'b_f12', type: 'skills', collapsed: true, data: { name: 'Machine Learning', keywords: ['DeepMD-kit', 'PyTorch Geometric', 'Scikit-learn', 'HuggingFace'], level: '', showLevel: false } },
-    { id: 'b_f13', type: 'skills', collapsed: true, data: { name: 'Tools', keywords: ['Linux', 'Git', 'HPC / Slurm', 'LaTeX'], level: '', showLevel: false } },
+    { id: 'b_f10', type: 'skills', collapsed: true, data: { name: 'Programming', keywords: ['Python', 'PyTorch', 'C++', 'Shell'] } },
+    { id: 'b_f11', type: 'skills', collapsed: true, data: { name: 'Simulation', keywords: ['Gaussian', 'ORCA', 'VASP', 'LAMMPS', 'GROMACS'] } },
+    { id: 'b_f12', type: 'skills', collapsed: true, data: { name: 'Machine Learning', keywords: ['DeepMD-kit', 'PyTorch Geometric', 'Scikit-learn', 'HuggingFace'] } },
+    { id: 'b_f13', type: 'skills', collapsed: true, data: { name: 'Tools', keywords: ['Linux', 'Git', 'HPC / Slurm', 'LaTeX'] } },
     {
       id: 'b_f14', type: 'custom', collapsed: true,
       data: {

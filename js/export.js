@@ -44,7 +44,7 @@ const JSONResume = {
           projects.push({ name: d.name, url: d.url, description: d.description, startDate: d.startDate, endDate: d.current ? null : (d.endDate || null), keywords: d.keywords, roles: d.roles, highlights: d.highlights });
           break;
         case 'skills':
-          skills.push({ name: d.name, keywords: d.keywords, level: d.level });
+          skills.push({ name: d.name, keywords: d.keywords });
           break;
       }
     }
@@ -68,7 +68,7 @@ const JSONResume = {
     for (const w of r.work || []) blocks.push({ id: uid('b'), type: 'work', visible: true, data: { organization: w.name || '', position: w.position || '', location: w.location || '', startDate: w.startDate || '', endDate: w.endDate || '', current: !w.endDate, summary: w.summary || '', highlights: w.highlights || [], url: w.url || '' } });
     for (const e of r.education || []) blocks.push({ id: uid('b'), type: 'education', visible: true, data: { institution: e.institution || '', location: e.location || '', degree: e.studyType || '', area: e.area || '', startDate: e.startDate || '', endDate: e.endDate || '', current: !e.endDate, score: e.score || '', courses: e.courses || [], highlights: e.highlights || [] } });
     for (const p of r.projects || []) blocks.push({ id: uid('b'), type: 'projects', visible: true, data: { name: p.name || '', url: p.url || '', description: p.description || '', startDate: p.startDate || '', endDate: p.endDate || '', current: !p.endDate, keywords: p.keywords || [], roles: p.roles || [], highlights: p.highlights || [] } });
-    for (const s of r.skills || []) blocks.push({ id: uid('b'), type: 'skills', visible: true, data: { name: s.name || '', keywords: s.keywords || [], level: s.level || '', showLevel: false } });
+    for (const s of r.skills || []) blocks.push({ id: uid('b'), type: 'skills', visible: true, data: { name: s.name || '', keywords: s.keywords || [] } });
     return { schemaVersion: 1, theme: 'classic', meta: { dateFormat: 'MMM YYYY' }, blocks };
   }
 };
