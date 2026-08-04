@@ -176,6 +176,24 @@ const tests = `
   await refreshSaveTarget();
   assert(els['#save-target'].textContent.includes('另存为'), '无句柄时提示 Ctrl+S 另存为');
 
+  // 9. 自定义块相同 title 自动合并（避免重复大标题）
+  store.setState({
+    schemaVersion: 1, theme: 'classic', accent: '#1f3864', meta: { dateFormat: 'MMM YYYY' },
+    blocks: [
+      { id: 'c1', type: 'custom', data: { title: 'Teaching', position: 'TA A', highlights: [] }, visible: true },
+      { id: 'c2', type: 'custom', data: { title: 'Teaching', position: 'TA B', highlights: [] }, visible: true },
+      { id: 'c3', type: 'custom', data: { title: 'Awards', position: 'Award 1', highlights: [] }, visible: true },
+      { id: 'c4', type: 'custom', data: { title: '', position: 'No title', highlights: [] }, visible: true }
+    ]
+  });
+  renderPreview(store.state);
+  const ph9 = els['#preview-pane'].innerHTML;
+  const h2Count = (ph9.match(/class="section-title"/g) || []).length;
+  assert(h2Count === 2, '自定义块合并后标题数=2（Teaching+Awards），实际 ' + h2Count);
+  assert((ph9.match(/section-title">Teaching</g) || []).length === 1, 'Teaching 只出现一次标题');
+  assert(ph9.includes('TA A') && ph9.includes('TA B'), '同标题两个块内容都在');
+  assert(ph9.includes('Award 1') && ph9.includes('No title'), '其他块内容都在');
+
   console.log('ALL SMOKE TESTS PASSED ✅  (' + store.state.blocks.length + ' blocks)');
 })().catch(e => { console.error('FAIL ❌'); console.error(e.stack || e); process.exit(1); });
 `;

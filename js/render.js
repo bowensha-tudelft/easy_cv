@@ -4,11 +4,20 @@
 function renderSequence(blocks, ctx) {
   let html = '';
   let lastType = null;
+  let lastCustomTitle = null;
   for (const b of blocks) {
     if (b.visible === false) continue;
     const t = BlockRegistry.get(b.type);
     if (!t) continue;
     if (t.sectionTitle && b.type !== lastType) html += '<h2 class="section-title">' + escapeHTML(t.sectionTitle) + '</h2>';
+    if (b.type === 'custom') {
+      // 自定义块：相同 title 自动合并为一个标题（仅连续块；隔其他类型则各自出标题）
+      const title = (b.data.title || '').trim();
+      if (title && title !== lastCustomTitle) html += '<h2 class="section-title">' + escapeHTML(title) + '</h2>';
+      lastCustomTitle = title;
+    } else {
+      lastCustomTitle = null;
+    }
     html += t.renderHTML(b, ctx);
     lastType = b.type;
   }

@@ -71,11 +71,8 @@ function skillsRender(b, ctx) {
     + '</div>';
 }
 function customRender(b, ctx) {
-  const d = b.data, esc = ctx.esc;
-  return '<section class="custom-block">'
-    + (d.title ? '<h2 class="section-title">' + esc(d.title) + '</h2>' : '')
-    + experienceRender(b, ctx)
-    + '</section>';
+  // 标题由 renderSequence 统一输出（相同 title 自动合并），这里只渲染内容
+  return '<section class="custom-block">' + experienceRender(b, ctx) + '</section>';
 }
 
 const BLOCK_TYPES = {
