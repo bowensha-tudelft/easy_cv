@@ -4,3 +4,6 @@ Thumbs.db
 easy-cv.pdf
 convert-cv-workspace/
 data/
+# 个人真实简历，绝不提交
+BowenSha-import.json
+CV_BowenSha_new.pdf
