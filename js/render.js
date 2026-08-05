@@ -31,6 +31,7 @@ function renderPreview(state) {
   const themeKey = THEMES[state.theme] ? state.theme : 'classic';
   const fmt = (state.meta && state.meta.dateFormat) || 'MMM YYYY';
   const lang = (state.meta && state.meta.language) === 'zh' ? 'zh' : 'en';
+  const zh = lang === 'zh';
   const ctx = {
     esc: escapeHTML,
     icon,
@@ -38,7 +39,9 @@ function renderPreview(state) {
     markup: renderLightMarkup,
     fmtDate: v => fmtDate(v, fmt),
     range: (s, e, c) => rangeText(s, e, c, fmt, lang),
-    lang
+    lang,
+    colon: zh ? '：' : ': ',   // 冒号（中/英）
+    list: zh ? '、' : ', '     // 列表分隔符（中/英）
   };
   const accent = normalizeAccent(state.accent);
   $('#preview-pane').innerHTML = '<div class="page ' + themeKey + '" style="--accent:' + accent + '">' + renderSequence(state.blocks, ctx) + '</div>';

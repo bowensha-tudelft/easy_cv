@@ -20,7 +20,10 @@ function headerRender(b, ctx) {
 }
 function educationRender(b, ctx) {
   const d = b.data, esc = ctx.esc;
-  const head = [d.degree, d.area ? 'in ' + d.area : ''].filter(Boolean).join(' ');
+  // 英文用 "PhD in Mechanical Engineering"；中文不用 in，直接拼接
+  const head = ctx.lang === 'zh'
+    ? [d.degree, d.area].filter(Boolean).join(' ')
+    : [d.degree, d.area ? 'in ' + d.area : ''].filter(Boolean).join(' ');
   const org = [d.institution, d.location].filter(Boolean).join(' · ');
   const hs = (d.highlights || []).filter(Boolean);
   return '<div class="entry">'
@@ -29,7 +32,7 @@ function educationRender(b, ctx) {
     + '<div class="dates">' + ctx.range(d.startDate, d.endDate, d.current) + '</div>'
     + '</div>'
     + (org ? '<div class="org">' + esc(org) + '</div>' : '')
-    + (d.score ? '<p class="score">GPA: ' + esc(d.score) + '</p>' : '')
+    + (d.score ? '<p class="score">GPA' + ctx.colon + esc(d.score) + '</p>' : '')
     + ((d.courses || []).length ? '<div class="tags-line">' + d.courses.map(c => '<span class="ptag">' + esc(c) + '</span>').join('') + '</div>' : '')
     + (hs.length ? '<ul>' + hs.map(h => '<li>' + ctx.inline(h) + '</li>').join('') + '</ul>' : '')
     + '</div>';
@@ -56,7 +59,7 @@ function projectsRender(b, ctx) {
     + (d.name ? '<h3>' + esc(d.name) + '</h3>' : '')
     + '<div class="dates">' + ctx.range(d.startDate, d.endDate, d.current) + '</div>'
     + '</div>'
-    + ((d.roles || []).length ? '<div class="org">' + d.roles.map(esc).join(', ') + '</div>' : '')
+    + ((d.roles || []).length ? '<div class="org">' + d.roles.map(esc).join(ctx.list) + '</div>' : '')
     + (d.description ? '<p>' + ctx.inline(d.description) + '</p>' : '')
     + (d.url ? '<div class="org"><a href="' + esc(d.url) + '" target="_blank" rel="noopener">' + esc(d.url) + '</a></div>' : '')
     + ((d.keywords || []).length ? '<div class="tags-line">' + d.keywords.map(k => '<span class="ptag">' + esc(k) + '</span>').join('') + '</div>' : '')
@@ -66,7 +69,7 @@ function projectsRender(b, ctx) {
 function skillsRender(b, ctx) {
   const d = b.data, esc = ctx.esc;
   return '<div class="skill-row"><span class="skill-name">' + esc(d.name) + '</span>'
-    + ((d.keywords || []).length ? ': ' + d.keywords.map(esc).join(', ') : '')
+    + ((d.keywords || []).length ? ctx.colon + d.keywords.map(esc).join(ctx.list) : '')
     + '</div>';
 }
 function customRender(b, ctx) {

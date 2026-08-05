@@ -223,6 +223,7 @@ Patch 的**路径根是应用 JSON 对象本身**，一次提交一个 patch 数
 - **小节分组**：连续同类型块合并到一个小节标题下。有自动标题的类型：`education→Education`、`work→Work Experience`、`research→Research Experience`、`projects→Projects`、`skills→Skills`；`header` 与 `custom` 没有自动标题（`custom` 用自身 `title` 作标题）。
 - **custom 标题合并**：连续多个 `custom` 块的 `title` 相同时，只渲染**一个**小节标题，其下依次列出各块内容（适合把多个同类条目放一个标题下）；`title` 不同或中间隔着其他类型时，各自独立出标题。空 `title` 不渲染标题。
 - **日期显示**：由 `meta.dateFormat` 决定 `Jun 2022` 或 `2022-06`；`current=true` 显示 `开始 – Present`（`meta.language="zh"` 时为 `开始 – 至今`）。
+- **中英标点**：`meta.language="zh"` 时，自动拼接用中文标点——技能/项目列表用 `：` 和 `、`（英文为 `: ` 和 `, `）；教育学位不加 "in"（如 `博士 机械工程`，英文为 `PhD in Mechanical Engineering`）。这些是渲染器拼的，数据里不要自己加标点。
 - `visible:false` 的块在预览/打印中隐藏。
 - 顺序即文档顺序：header 建议放最前；想让某小节出现在别的类型之间，就调整 `blocks` 数组顺序。
 
