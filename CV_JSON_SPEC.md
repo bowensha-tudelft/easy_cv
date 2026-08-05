@@ -32,6 +32,7 @@
 | `theme` | string | `"classic"`（衬线）/ `"modern"`（无衬线）——只决定字体 |
 | `accent` | string | 主题色，存为 `#RRGGBB`；解析器也接受 `#RGB`、`rgb(r,g,b)`（整数或百分比），统一归一化为 hex；独立于字体 |
 | `meta.dateFormat` | string | `"MMM YYYY"`（显示 `Jun 2022`）或 `"YYYY-MM"`（显示 `2022-06`） |
+| `meta.language` | string | 可选，`"en"`（默认）或 `"zh"`。决定自动小节标题：`en`→Education / Work Experience / Research Experience / Projects / Skills；`zh`→教育经历 / 工作经历 / 研究经历 / 项目 / 技能；`current=true` 的结束时间也显示「至今」（`en` 为 Present）。`custom` 块标题始终用 `title` 字段原文，不受此影响 |
 | `blocks` | array | 块数组，见下 |
 
 ## 2. 块（Block）基础结构
@@ -221,7 +222,7 @@ Patch 的**路径根是应用 JSON 对象本身**，一次提交一个 patch 数
 
 - **小节分组**：连续同类型块合并到一个小节标题下。有自动标题的类型：`education→Education`、`work→Work Experience`、`research→Research Experience`、`projects→Projects`、`skills→Skills`；`header` 与 `custom` 没有自动标题（`custom` 用自身 `title` 作标题）。
 - **custom 标题合并**：连续多个 `custom` 块的 `title` 相同时，只渲染**一个**小节标题，其下依次列出各块内容（适合把多个同类条目放一个标题下）；`title` 不同或中间隔着其他类型时，各自独立出标题。空 `title` 不渲染标题。
-- **日期显示**：由 `meta.dateFormat` 决定 `Jun 2022` 或 `2022-06`；`current=true` 显示 `开始 – Present`。
+- **日期显示**：由 `meta.dateFormat` 决定 `Jun 2022` 或 `2022-06`；`current=true` 显示 `开始 – Present`（`meta.language="zh"` 时为 `开始 – 至今`）。
 - `visible:false` 的块在预览/打印中隐藏。
 - 顺序即文档顺序：header 建议放最前；想让某小节出现在别的类型之间，就调整 `blocks` 数组顺序。
 

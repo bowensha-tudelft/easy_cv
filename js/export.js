@@ -101,10 +101,12 @@ function printPDF() { window.print(); }
 
 function openSettings() {
   $('#set-datefmt').value = (store.state.meta && store.state.meta.dateFormat) || 'MMM YYYY';
+  $('#set-lang').value = (store.state.meta && store.state.meta.language) === 'zh' ? 'zh' : 'en';
   $('#settings-modal').hidden = false;
 }
 function saveSettings() {
   store.setDateFormat($('#set-datefmt').value);
+  store.setLanguage($('#set-lang').value);
   $('#settings-modal').hidden = true;
   showToast('设置已保存');
 }

@@ -9,7 +9,11 @@ function renderSequence(blocks, ctx) {
     if (b.visible === false) continue;
     const t = BlockRegistry.get(b.type);
     if (!t) continue;
-    if (t.sectionTitle && b.type !== lastType) html += '<h2 class="section-title">' + escapeHTML(t.sectionTitle) + '</h2>';
+    if (t.sectionTitle && b.type !== lastType) {
+      const lang = (ctx && ctx.lang === 'zh') ? 'zh' : 'en';
+      const title = (SECTION_TITLES[lang] && SECTION_TITLES[lang][b.type]) || t.sectionTitle;
+      html += '<h2 class="section-title">' + escapeHTML(title) + '</h2>';
+    }
     if (b.type === 'custom') {
       // 自定义块：相同 title 自动合并为一个标题（仅连续块；隔其他类型则各自出标题）
       const title = (b.data.title || '').trim();
@@ -26,13 +30,15 @@ function renderSequence(blocks, ctx) {
 function renderPreview(state) {
   const themeKey = THEMES[state.theme] ? state.theme : 'classic';
   const fmt = (state.meta && state.meta.dateFormat) || 'MMM YYYY';
+  const lang = (state.meta && state.meta.language) === 'zh' ? 'zh' : 'en';
   const ctx = {
     esc: escapeHTML,
     icon,
     inline: inlineMarkup,
     markup: renderLightMarkup,
     fmtDate: v => fmtDate(v, fmt),
-    range: (s, e, c) => rangeText(s, e, c, fmt)
+    range: (s, e, c) => rangeText(s, e, c, fmt, lang),
+    lang
   };
   const accent = normalizeAccent(state.accent);
   $('#preview-pane').innerHTML = '<div class="page ' + themeKey + '" style="--accent:' + accent + '">' + renderSequence(state.blocks, ctx) + '</div>';

@@ -206,6 +206,21 @@ const tests = `
   const ph10 = els['#preview-pane'].innerHTML;
   assert(ph10.includes('Lang') && ph10.includes('Python, C++'), '技能组名与技能项渲染');
 
+  // 11. 中英文切换：小节标题 + Present/至今 本地化
+  store.setState(deepClone(SAMPLE));
+  store.addBlock('projects'); // 补一个 projects 块，验证「项目」标题
+  store.setLanguage('zh');
+  assert(store.state.meta.language === 'zh', 'setLanguage 存入 meta.language');
+  renderPreview(store.state);
+  const zhP = els['#preview-pane'].innerHTML;
+  assert(zhP.includes('教育经历') && zhP.includes('研究经历') && zhP.includes('项目') && zhP.includes('技能'), '中文小节标题渲染');
+  assert(zhP.includes('至今'), '中文 current 显示至今');
+  store.setLanguage('en');
+  renderPreview(store.state);
+  const enP = els['#preview-pane'].innerHTML;
+  assert(enP.includes('Education') && enP.includes('Research Experience') && enP.includes('Projects') && enP.includes('Skills'), '英文小节标题渲染');
+  assert(!enP.includes('教育经历'), '英文模式无中文标题');
+
   console.log('ALL SMOKE TESTS PASSED ✅  (' + store.state.blocks.length + ' blocks)');
 })().catch(e => { console.error('FAIL ❌'); console.error(e.stack || e); process.exit(1); });
 `;

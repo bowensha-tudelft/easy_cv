@@ -61,9 +61,9 @@ function fmtDate(ym, fmt) {
   const mi = parseInt(p[1], 10) - 1;
   return (MONTHS[mi] || p[1]) + ' ' + p[0];
 }
-function rangeText(start, end, current, fmt) {
+function rangeText(start, end, current, fmt, lang) {
   const f = v => fmtDate(v, fmt);
-  if (current) return (start ? f(start) + ' – ' : '') + 'Present';
+  if (current) return (start ? f(start) + ' – ' : '') + (lang === 'zh' ? '至今' : 'Present');
   if (start && end) return f(start) + ' – ' + f(end);
   return f(start) || f(end) || '';
 }

@@ -144,6 +144,11 @@ class StateStore {
     this.state.meta.dateFormat = fmt;
     this.commit(null, 'data');
   }
+  setLanguage(lang) {
+    this.state.meta = this.state.meta || {};
+    this.state.meta.language = lang === 'zh' ? 'zh' : 'en';
+    this.commit(null, 'data');
+  }
   setAccent(color) {
     const hex = parseColor(color);
     if (!hex) return false;

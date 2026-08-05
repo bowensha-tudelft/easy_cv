@@ -74,6 +74,12 @@ function customRender(b, ctx) {
   return '<section class="custom-block">' + experienceRender(b, ctx) + '</section>';
 }
 
+/* 自动小节标题的多语言映射（zh 与「+」添加菜单的中文标签一致） */
+const SECTION_TITLES = {
+  en: { education: 'Education', work: 'Work Experience', research: 'Research Experience', projects: 'Projects', skills: 'Skills' },
+  zh: { education: '教育经历', work: '工作经历', research: '研究经历', projects: '项目', skills: '技能' }
+};
+
 const BLOCK_TYPES = {
   header: {
     key: 'header', label: '个人信息', icon: 'user', sectionTitle: null,
