@@ -153,6 +153,7 @@ body {
 .page h2.section-title {
   font-size: 10.5pt; text-transform: uppercase; letter-spacing: .08em;
   border-bottom: 1px solid #ccc; padding-bottom: 3px; margin: 15px 0 8px;
+  break-after: avoid; page-break-after: avoid;
 }
 .page .entry { margin-bottom: 9px; }
 .page .entry-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; }
