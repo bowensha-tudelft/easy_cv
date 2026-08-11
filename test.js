@@ -221,7 +221,7 @@ const tests = `
   assert(enP.includes('Education') && enP.includes('Research Experience') && enP.includes('Projects') && enP.includes('Skills'), '英文小节标题渲染');
   assert(!enP.includes('教育经历'), '英文模式无中文标题');
   // 中英标点：技能冒号/分隔、教育 in
-  assert(zhP.includes('</span>：Python、PyTorch'), '中文技能用：和、');
+  assert(zhP.includes('</span>：Python，PyTorch'), '中文技能用：和，');
   assert(zhP.includes('PhD Chemistry') && !zhP.includes('PhD in Chemistry'), '中文教育不加 in');
   assert(enP.includes('</span>: Python, PyTorch'), '英文技能用: 和, ');
   assert(enP.includes('PhD in Chemistry'), '英文教育保留 in');

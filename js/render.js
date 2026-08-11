@@ -41,7 +41,7 @@ function renderPreview(state) {
     range: (s, e, c) => rangeText(s, e, c, fmt, lang),
     lang,
     colon: zh ? '：' : ': ',   // 冒号（中/英）
-    list: zh ? '、' : ', '     // 列表分隔符（中/英）
+    list: zh ? '，' : ', '     // 列表分隔符（中/英）
   };
   const accent = normalizeAccent(state.accent);
   $('#preview-pane').innerHTML = '<div class="page ' + themeKey + '" style="--accent:' + accent + '">' + renderSequence(state.blocks, ctx) + '</div>';
