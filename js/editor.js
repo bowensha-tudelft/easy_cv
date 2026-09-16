@@ -19,7 +19,7 @@ function linkRowHTML(l, i) {
 function detailRowHTML(x, i) {
   return '<div class="detail-row">'
     + '<input type="text" data-dt="label" data-i="' + i + '" value="' + escapeHTML(x.label || '') + '" placeholder="名称，如 籍贯">'
-    + '<input type="text" data-dt="value" data-i="' + i + '" value="' + escapeHTML(x.value || '') + '" placeholder="内容，如 江苏">'
+    + '<input type="text" data-dt="value" data-i="' + i + '" value="' + escapeHTML(x.value || '') + '" placeholder="内容，如 上海/北京">'
     + '<span class="blk-btn del" data-act="rmdetail" data-i="' + i + '" title="删除">✕</span>'
     + '</div>';
 }
