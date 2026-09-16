@@ -26,6 +26,9 @@ const JSONResume = {
           if (d.phone) basics.phone = d.phone;
           if (d.location) { basics.location = basics.location || {}; basics.location.city = d.location; }
           if (d.summary) basics.summary = d.summary;
+          // 仅当「要显示」且照片合法时才写 basics.image。
+          // 已知有损：showPhoto:true 但无照片（占位状态）在 JSON Resume 里无法表达，往返后退化为 false。
+          if (d.showPhoto && isValidPhotoDataURL(d.photo)) basics.image = d.photo;
           for (const l of d.links || []) {
             if (!l.url) continue;
             if (l.icon === 'website') basics.url = l.url;
@@ -53,6 +56,8 @@ const JSONResume = {
   fromStrict(r) {
     const blocks = [];
     if (r.basics) {
+      // image 可能来自手改的 JSON，走一遍校验；showPhoto 由「有没有合法照片」反推
+      const photo = sanitizePhoto(r.basics.image);
       blocks.push({
         id: uid('b'), type: 'header', visible: true,
         data: {
@@ -60,6 +65,8 @@ const JSONResume = {
           phone: r.basics.phone || '',
           location: (r.basics.location && r.basics.location.city) || '',
           summary: r.basics.summary || '',
+          showPhoto: !!photo,
+          photo: photo,
           links: (r.basics.profiles || []).map(p => ({ id: uid('l'), label: p.network || '', icon: networkIcon(p.network), url: p.url || '' }))
             .concat(r.basics.url ? [{ id: uid('l'), label: 'Website', icon: 'website', url: r.basics.url }] : [])
         }

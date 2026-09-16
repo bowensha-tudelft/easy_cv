@@ -110,6 +110,13 @@ body {
 .bullet-row textarea { padding-right: 30px; } /* 继承 .field textarea 样式（个人简介同款），预留 ✕ 空间 */
 .bullet-row .del { position: absolute; top: 6px; right: 6px; }
 
+.photo-field { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.photo-thumb {
+  width: 45px; height: 60px; object-fit: cover;   /* 与预览同为 3:4，等比缩小 */
+  border: 1px solid var(--border); border-radius: 4px; background: #fff;
+}
+.photo-empty { font-size: 12px; color: var(--muted); }
+
 .add-block-btn {
   align-self: flex-end; flex: 0 0 auto;
   width: 46px; height: 46px; margin: 10px 0 12px;
@@ -150,6 +157,21 @@ body {
 .page .cv-link .ic { color: var(--accent); }
 .page .cv-link:hover { text-decoration: underline; }
 .page .cv-summary { margin: 9px 0 0; font-size: 10pt; }
+/* ---- 照片（仅 d.showPhoto 为真时才会渲染出这些元素） ---- */
+.page .cv-header.has-photo { display: flex; gap: 8mm; align-items: flex-start; }
+.page .cv-header-main { flex: 1 1 auto; min-width: 0; } /* min-width:0 让长 URL 能换行而不撑破 flex */
+.page .cv-photo {
+  flex: 0 0 auto;
+  width: 30mm; height: 40mm;    /* 3:4；A4 正文宽 180mm 的 1/6 */
+  object-fit: cover;            /* 自动居中裁切，不失真 */
+  border-radius: 2px;
+}
+/* 占位框 = 「你忘了放照片」的报错信号，照常打印（刻意不做 @media print 隐藏） */
+.page .cv-photo-empty {
+  border: 1px dashed #bbb; background: #fafafa;
+  display: flex; align-items: center; justify-content: center;
+  color: #aaa; font-size: 9pt;
+}
 .page h2.section-title {
   font-size: 10.5pt; text-transform: uppercase; letter-spacing: .08em;
   border-bottom: 1px solid #ccc; padding-bottom: 3px; margin: 15px 0 8px;
@@ -188,7 +210,7 @@ body {
   .app-body { display: block; }
   .preview-pane { padding: 0; overflow: visible; }
   .page { width: auto; min-height: 0; box-shadow: none; padding: 0; margin: 0; }
-  .page .entry, .page .skill-row, .page .cv-link, .page .ptag, .page .custom-block { break-inside: avoid; page-break-inside: avoid; }
+  .page .entry, .page .skill-row, .page .cv-link, .page .ptag, .page .custom-block, .page .cv-header { break-inside: avoid; page-break-inside: avoid; }
   .page p { orphans: 3; widows: 3; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }

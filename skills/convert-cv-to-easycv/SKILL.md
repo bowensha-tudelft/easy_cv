@@ -33,6 +33,7 @@ Easy CV 的 JSON 格式由项目根目录的 **`CV_JSON_SPEC.md`** 权威定义�
    - 教育经历、工作经历、研究经历、项目、技能、奖项/证书/出版物/语言/教学等
 4. **映射为 Easy CV 块**（对照 `CV_JSON_SPEC.md`）：
    - 头部信息 → 一个 `header` 块（`links` 数组带 `icon`/`url`）
+     - **照片**：本 skill **不提取照片**。如果源简历里有照片，把 `header.data.showPhoto` 设为 `false`（默认）或留空即可 —— 用户导入后在应用里自己上传。照片是内嵌的 base64，从 PDF 里抠图再编码不仅容易出错，还会让 JSON 臃肿。若用户确实需要，让他们在应用里点「选择图片」（只需一次点击，比自动提取更可靠）
    - 教育 → `education` 块（`degree`/`area`/`institution`/时间）
    - 正式工作（公司职位）→ `work` 块
    - 研究项目 → `research` 块（`position` 可填 "PhD Candidate / Research Assistant / 项目名"）

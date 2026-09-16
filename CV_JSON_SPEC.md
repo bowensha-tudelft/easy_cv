@@ -57,7 +57,7 @@
 
 ## 3. 块类型与 `data` 字段
 
-字段类型说明：`text`=字符串；`month`=`"YYYY-MM"` 字符串（可空）；`textarea`=字符串（可含换行）；`bullets`=字符串数组（一项一条）；`tags`=字符串数组（chip，回车添加）；`list`=字符串数组（编辑器里每行一条可编辑）；`checkbox`=布尔；`links`=对象数组（见 header）；`select`=固定枚举。
+字段类型说明：`text`=字符串；`month`=`"YYYY-MM"` 字符串（可空）；`textarea`=字符串（可含换行）；`bullets`=字符串数组（一项一条）；`tags`=字符串数组（chip，回车添加）；`list`=字符串数组（编辑器里每行一条可编辑）；`checkbox`=布尔；`links`=对象数组（见 header）；`photo`=图片 data URL 字符串（见 header）；`select`=固定枚举。
 
 ### 3.1 `header` —— 个人信息（渲染在顶部，无小节标题）
 
@@ -69,7 +69,23 @@
 | `phone` | text | 电话 | `"+86 139 0000 0000"` |
 | `location` | text | 所在地 | `"Shanghai, China"` |
 | `summary` | textarea | 个人简介 | — |
+| `showPhoto` | checkbox | 是否显示照片（默认 `false`） | `true` |
+| `photo` | photo | 照片，JPEG data URL | `"data:image/jpeg;base64,/9j/4AAQ..."` |
 | `links` | links | 链接数组 | 见下 |
+
+**照片（`showPhoto` + `photo`）两个字段配合使用，对应三种状态：**
+
+| `showPhoto` | `photo` | 渲染结果 |
+|---|---|---|
+| `false`（默认） | 任意 | 不渲染照片，版面与没有此功能时**完全一致** |
+| `true` | `""` | 右上角渲染**虚线占位框**（内含灰字「照片」），**会被打印出来** |
+| `true` | 合法 data URL | 右上角渲染照片 |
+
+- 占位框是刻意的「你还没放照片」提醒，不做打印隐藏 —— 屏幕上看得见但纸上消失的话，提醒就失效了
+- `photo` 只接受 `data:image/(png|jpeg|webp);base64,` 开头的字符串，其余（`http://`、本地路径、`javascript:` 等）一律按空处理
+- 渲染尺寸固定 30mm × 40mm（3:4），用 `object-fit: cover` 居中裁切，所以**非 3:4 的照片不会失真，但边缘会被裁掉**。竖版 3:4 效果最佳
+- 照片是自包含的 base64，**不要写文件路径**：本应用以 `file://` 双击运行为目标，路径在跨浏览器 / 跨机器时不可用
+- AI / agent 通常不必读 `photo` 的值（很长）。要移除照片就把 `photo` 设为 `""`；要连占位框一起关掉，再把 `showPhoto` 设为 `false`
 
 `links` 每项：
 
@@ -208,6 +224,7 @@ Patch 的**路径根是应用 JSON 对象本身**，一次提交一个 patch 数
 | 块类型 | 应用字段 → | JSON Resume |
 |---|---|---|
 | `header` | `name`/`title`/`email`/`phone`/`location`/`summary` → | `basics.name` / `basics.label` / `basics.email` / `basics.phone` / `basics.location.city` / `basics.summary` |
+| `header` | `showPhoto=true` 且 `photo` 合法 → | `basics.image`（照片，data URL） |
 | `header.links` | `icon == "website"` → | `basics.url` |
 | `header.links` | 其余 → | `basics.profiles[]`（`network`=label 或图标默认名，`url`） |
 | `work` / `research` | → | `work[]`（`organization→name`，`position`，`endDate` 在 `current=true` 时为 null） |
@@ -218,12 +235,15 @@ Patch 的**路径根是应用 JSON 对象本身**，一次提交一个 patch 数
 
 「导入」时若 JSON 没有 `blocks` 字段，则按 `fromStrict()` 反向还原为块。
 
+**照片在严格格式下是有损的**：JSON Resume 只有 `basics.image`（对应「有照片」），没有表达「要照片但还没传」的字段。所以往返一次后，`showPhoto:true` + `photo:""` 这个占位状态会退化成 `showPhoto:false`，虚线框消失。**应用自身的 JSON 格式（Ctrl+S / 导出）完整保留该状态**，只有走严格格式才会丢。
+
 ## 7. 渲染规则（AI 应知道的展示行为）
 
 - **小节分组**：连续同类型块合并到一个小节标题下。有自动标题的类型：`education→Education`、`work→Work Experience`、`research→Research Experience`、`projects→Projects`、`skills→Skills`；`header` 与 `custom` 没有自动标题（`custom` 用自身 `title` 作标题）。
 - **custom 标题合并**：连续多个 `custom` 块的 `title` 相同时，只渲染**一个**小节标题，其下依次列出各块内容（适合把多个同类条目放一个标题下）；`title` 不同或中间隔着其他类型时，各自独立出标题。空 `title` 不渲染标题。
 - **日期显示**：由 `meta.dateFormat` 决定 `Jun 2022` 或 `2022-06`；`current=true` 显示 `开始 – Present`（`meta.language="zh"` 时为 `开始 – 至今`）。
 - **中英标点**：`meta.language="zh"` 时，自动拼接用中文标点——技能/项目列表用 `：` 和 `，`（英文为 `: ` 和 `, `）；教育学位不加 "in"（如 `博士 机械工程`，英文为 `PhD in Mechanical Engineering`）。这些是渲染器拼的，数据里不要自己加标点。
+- **照片**：`showPhoto=true` 时 header 变为两列 —— 正文在左，30×40mm 照片框在右上角（3:4，`object-fit: cover`）；`showPhoto=true` 但 `photo` 为空时右上角渲染**会打印出来的**虚线占位框；`showPhoto` 为假（含老数据缺该键）时 header 版面与没有照片功能时**逐字节一致**。
 - `visible:false` 的块在预览/打印中隐藏。
 - 顺序即文档顺序：header 建议放最前；想让某小节出现在别的类型之间，就调整 `blocks` 数组顺序。
 

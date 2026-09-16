@@ -42,7 +42,7 @@ global.FileReader = function () {
 };
 
 /* ---- 拼接全部模块 + 测试代码，一次性 eval（共享作用域） ---- */
-const order = ['utils', 'blocks', 'themes', 'store', 'render', 'editor', 'export', 'sample', 'boot'];
+const order = ['utils', 'photo', 'blocks', 'themes', 'store', 'render', 'editor', 'export', 'sample', 'boot'];
 let code = '';
 for (const f of order) code += '\n' + fs.readFileSync(path.join(__dirname, 'js', f + '.js'), 'utf8');
 
@@ -225,6 +225,95 @@ const tests = `
   assert(zhP.includes('PhD Chemistry') && !zhP.includes('PhD in Chemistry'), '中文教育不加 in');
   assert(enP.includes('</span>: Python, PyTorch'), '英文技能用: 和, ');
   assert(enP.includes('PhD in Chemistry'), '英文教育保留 in');
+
+  // 12. 简历照片
+  const tctx = {
+    esc: escapeHTML, icon, inline: inlineMarkup, markup: renderLightMarkup,
+    fmtDate: v => fmtDate(v, 'MMM YYYY'), range: (s, e, c) => rangeText(s, e, c, 'MMM YYYY', 'en'),
+    lang: 'en', colon: ': ', list: ', '
+  };
+
+  // 12a. 最高优先级约束：未勾选「显示照片」时，输出与加照片功能之前逐字节一致
+  assert(headerRender({ data: { name: 'A', title: 'B', summary: 'S', showPhoto: false } }, tctx)
+    === '<header class="cv-header"><h1>A</h1><div class="cv-title">B</div><p class="cv-summary">S</p></header>',
+    '未勾选：header 输出与加照片前逐字节一致');
+  assert(!headerRender({ data: { name: 'A' } }, tctx).includes('cv-photo'),
+    '老数据（根本没有 showPhoto 键）也不渲染照片');
+
+  // 12b. 勾选但没照片 → 会打印出来的虚线占位框
+  const emptyHtml = headerRender({ data: { name: 'A', showPhoto: true, photo: '' } }, tctx);
+  assert(emptyHtml.includes('cv-photo-empty') && emptyHtml.includes('照片'), '勾选无照片 → 占位框 + 提示文字');
+  assert(emptyHtml.includes('cv-header-main'), '勾选后正文包进 cv-header-main');
+
+  // 12c. 勾选且有照片 → img
+  const imgHtml = headerRender({ data: { name: 'A', showPhoto: true, photo: 'data:image/jpeg;base64,/9j/4AAQ' } }, tctx);
+  assert(imgHtml.includes('<img class="cv-photo" src="data:image/jpeg;base64,/9j/4AAQ"'), '勾选有照片 → img.cv-photo');
+  assert(!imgHtml.includes('cv-photo-empty'), '有照片时不出现占位框');
+
+  // 12d. data URL 校验：只放行 canvas 产出的三种 base64 图片
+  assert(isValidPhotoDataURL('data:image/jpeg;base64,/9j/4AAQSkZJRg==') === true, 'jpeg data URL 通过');
+  assert(isValidPhotoDataURL('data:image/png;base64,iVBORw0KGgo=') === true, 'png data URL 通过');
+  assert(isValidPhotoDataURL('data:image/webp;base64,UklGRh4A') === true, 'webp data URL 通过');
+  assert(isValidPhotoDataURL('javascript:alert(1)') === false, '拒绝 javascript:');
+  assert(isValidPhotoDataURL('data:image/svg+xml;base64,PHN2Zz4=') === false, '拒绝 svg');
+  assert(isValidPhotoDataURL('http://x/a.jpg') === false, '拒绝 http URL');
+  assert(isValidPhotoDataURL('C:\\Users\\me\\a.jpg') === false, '拒绝文件路径');
+  assert(isValidPhotoDataURL('data:image/jpeg;base64,') === false, '拒绝空载荷');
+  assert(isValidPhotoDataURL('') === false, '拒绝空串');
+  assert(isValidPhotoDataURL(null) === false, '拒绝 null');
+  assert(isValidPhotoDataURL(undefined) === false, '拒绝 undefined');
+  assert(isValidPhotoDataURL(123) === false, '拒绝非字符串');
+
+  // 12e. 编辑器 photo 字段：空态 / 有照片两副面孔
+  const photoField = BLOCK_TYPES.header.fields.find(f => f.key === 'photo');
+  const emptyField = fieldHTML({ data: { photo: '' } }, photoField);
+  assert(emptyField.includes('未选择照片') && emptyField.includes('pick-photo'), '无照片：空态 + 选择按钮');
+  assert(!emptyField.includes('clear-photo'), '无照片：不显示清除按钮');
+  const filledField = fieldHTML({ data: { photo: 'data:image/jpeg;base64,/9j/4AAQ' } }, photoField);
+  assert(filledField.includes('photo-thumb') && filledField.includes('clear-photo'), '有照片：缩略图 + 清除按钮');
+
+  // 12f. 严格 JSON Resume 往返：有照片时 image 不丢
+  const withPhoto = deepClone(SAMPLE);
+  const wHdr = withPhoto.blocks.find(b => b.type === 'header');
+  wHdr.data.showPhoto = true;
+  wHdr.data.photo = 'data:image/jpeg;base64,/9j/4AAQ';
+  const strict = JSONResume.toStrict(withPhoto);
+  assert(strict.basics.image === 'data:image/jpeg;base64,/9j/4AAQ', 'toStrict 写入 basics.image');
+  const backHdr = JSONResume.fromStrict(strict).blocks.find(b => b.type === 'header');
+  assert(backHdr.data.photo === 'data:image/jpeg;base64,/9j/4AAQ' && backHdr.data.showPhoto === true,
+    '严格往返后有照片：photo / showPhoto 均不丢');
+
+  // 12g. 已知有损：仅占位（无照片）在严格格式下退化为 false —— 断言退化，别日后误判成 bug
+  const placeholder = deepClone(SAMPLE);
+  const pHdr = placeholder.blocks.find(b => b.type === 'header');
+  pHdr.data.showPhoto = true; pHdr.data.photo = '';
+  const strict2 = JSONResume.toStrict(placeholder);
+  assert(strict2.basics.image === undefined, '无照片时 toStrict 不写 image');
+  assert(JSONResume.fromStrict(strict2).blocks.find(b => b.type === 'header').data.showPhoto === false,
+    '仅占位状态严格往返后退化为 false（§8 记录的已知行为）');
+
+  // 12h. 严格导入的 image 也要过校验
+  const badStrict = JSONResume.fromStrict({ basics: { image: 'javascript:alert(1)' } }).blocks[0].data;
+  assert(badStrict.photo === '' && badStrict.showPhoto === false, '严格导入拒绝非图片 image');
+  assert(JSONResume.fromStrict({ basics: { name: 'N' } }).blocks[0].data.showPhoto === false, '无 image 时 showPhoto 默认 false');
+
+  // 12i. 迁移：老 header 补默认值，非法 photo 清掉
+  const oldHdr = { type: 'header', data: { name: 'Z' } };
+  migrateBlock(oldHdr);
+  assert(oldHdr.data.showPhoto === false && oldHdr.data.photo === '', 'migrateBlock 补 header 照片默认值');
+  const badHdr = { type: 'header', data: { name: 'Z', photo: 'javascript:alert(1)' } };
+  migrateBlock(badHdr);
+  assert(badHdr.data.photo === '', 'migrateBlock 清掉非法 photo');
+
+  // 12j. 清除照片不改变 showPhoto（回到虚线框，而不是关掉整个照片功能）
+  store.setState(deepClone(SAMPLE));
+  const cHdr = store.state.blocks.find(b => b.type === 'header');
+  store.setField(cHdr.id, 'showPhoto', true);
+  store.setField(cHdr.id, 'photo', 'data:image/jpeg;base64,/9j/4AAQ');
+  store.setField(cHdr.id, 'photo', '');
+  assert(store.state.blocks.find(b => b.id === cHdr.id).data.showPhoto === true, '清除照片后 showPhoto 仍为 true');
+  renderPreview(store.state);
+  assert(els['#preview-pane'].innerHTML.includes('cv-photo-empty'), '清除照片后预览回到虚线占位框');
 
   console.log('ALL SMOKE TESTS PASSED ✅  (' + store.state.blocks.length + ' blocks)');
 })().catch(e => { console.error('FAIL ❌'); console.error(e.stack || e); process.exit(1); });

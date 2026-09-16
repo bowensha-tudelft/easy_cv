@@ -4,6 +4,7 @@
 let store = null;
 let editingSwatch = null;
 let swatchMenuHex = null;
+let photoTargetBlockId = null;   // 点了「选择图片」的那个块，文件选完后回填到这里
 
 function bindEvents() {
   const list = $('#block-list');
@@ -95,6 +96,9 @@ function bindEvents() {
       }
       case 'addlink': addLinkRow(id); break;
       case 'rmlink': removeLinkRow(id, +p.dataset.i); break;
+      case 'pick-photo': photoTargetBlockId = id; $('#photo-file').click(); break;
+      // 清除照片不改变 showPhoto：「我要放照片」的意图没变，只是素材没了 → 回到虚线框
+      case 'clear-photo': store.setField(id, 'photo', ''); renderPhotoField(id); break;
       case 'addbullet': { const k = p.closest('.field').dataset.key; addBullet(id, k); break; }
       case 'rmbullet': { const k = p.closest('.field').dataset.key; removeBullet(id, k, +p.dataset.i); break; }
       case 'add-block': addMenuAfterId = null; showMenu($('#addMenu'), p.getBoundingClientRect()); break;
@@ -127,6 +131,19 @@ function bindEvents() {
 
   // 导入文件
   $('#import-file').addEventListener('change', e => { if (e.target.files[0]) importJSONFile(e.target.files[0]); e.target.value = ''; });
+
+  // 照片文件：选完立刻缩到 400px 存成 data URL（同导入文件的写法，处理完清空 value 以便重复选同一文件）
+  $('#photo-file').addEventListener('change', async e => {
+    const file = e.target.files[0];
+    const id = photoTargetBlockId;
+    e.target.value = '';
+    if (!file || !id) return;
+    try {
+      const url = await makePhotoDataURL(file);
+      store.setField(id, 'photo', url);
+      renderPhotoField(id);
+    } catch (err) { showToast(err.message); }
+  });
 
   // 配色输入框回车：编辑模式保存修改，否则应用为主题色
   $('#accent-input').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); editingSwatch ? addCustomColor() : applyAccentInput(); } });

@@ -144,6 +144,13 @@ function randomAccent() {
 function migrateBlock(b) {
   if (!b || typeof b !== 'object') return;
   if (b.type === 'experience') b.type = 'research';
+  // header 照片字段：老草稿缺键时补默认值。注意 headerRender 读 undefined 也是 falsy，
+  // 所以没迁移也不会渲染出错，这里只是让数据干净、导出可控。
+  if (b.type === 'header' && b.data) {
+    if (typeof b.data.showPhoto !== 'boolean') b.data.showPhoto = false;
+    if (typeof b.data.photo !== 'string') b.data.photo = '';
+    else b.data.photo = sanitizePhoto(b.data.photo);   // 手改过的 JSON 可能塞进非图片串
+  }
   if (b.type === 'custom' && b.data && b.data.position === undefined) {
     const d = b.data;
     const lines = String(d.body || '').split('\n').map(s => s.trim()).filter(Boolean);

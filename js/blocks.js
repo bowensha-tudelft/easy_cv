@@ -10,12 +10,23 @@ function headerRender(b, ctx) {
   const links = (d.links || []).filter(l => l.url)
     .map(l => '<a class="cv-link" href="' + esc(l.url) + '" target="_blank" rel="noopener">' + ctx.icon(l.icon) + esc(l.label || ICON_LABELS[l.icon] || 'Link') + '</a>')
     .join('');
-  return '<header class="cv-header">'
-    + (d.name ? '<h1>' + esc(d.name) + '</h1>' : '')
+  const body = (d.name ? '<h1>' + esc(d.name) + '</h1>' : '')
     + (d.title ? '<div class="cv-title">' + esc(d.title) + '</div>' : '')
     + (contact.length ? '<div class="cv-contact">' + contact.join('') + '</div>' : '')
     + (links ? '<div class="cv-links">' + links + '</div>' : '')
-    + (d.summary ? '<p class="cv-summary">' + ctx.inline(d.summary) + '</p>' : '')
+    + (d.summary ? '<p class="cv-summary">' + ctx.inline(d.summary) + '</p>' : '');
+
+  // 未勾选「显示照片」：与加照片功能之前完全一致（同一条拼接路径，不是靠 CSS 恰好没变化）
+  if (!d.showPhoto) return '<header class="cv-header">' + body + '</header>';
+
+  // photo 经校验后直接插入，不做 escapeHTML：base64 字母表是 A-Za-z0-9+/=，
+  // 不含 & < > " '，转义对它是恒等操作；校验已保证字符串形状。
+  const photo = isValidPhotoDataURL(d.photo)
+    ? '<img class="cv-photo" src="' + d.photo + '" alt="">'
+    : '<div class="cv-photo cv-photo-empty">照片</div>';
+  return '<header class="cv-header has-photo">'
+    + '<div class="cv-header-main">' + body + '</div>'
+    + photo
     + '</header>';
 }
 function educationRender(b, ctx) {
@@ -86,7 +97,7 @@ const SECTION_TITLES = {
 const BLOCK_TYPES = {
   header: {
     key: 'header', label: '个人信息', icon: 'user', sectionTitle: null,
-    defaults: () => ({ name: '', title: '', email: '', phone: '', location: '', summary: '', links: [] }),
+    defaults: () => ({ name: '', title: '', email: '', phone: '', location: '', summary: '', links: [], showPhoto: false, photo: '' }),
     fields: [
       { key: 'name', label: '姓名', type: 'text' },
       { key: 'title', label: '职位 / 头衔', type: 'text' },
@@ -94,6 +105,8 @@ const BLOCK_TYPES = {
       { key: 'phone', label: '电话', type: 'text' },
       { key: 'location', label: '所在地', type: 'text' },
       { key: 'summary', label: '个人简介', type: 'textarea' },
+      { key: 'showPhoto', label: '显示照片', type: 'checkbox' },
+      { key: 'photo', label: '照片（3:4 竖版最佳）', type: 'photo' },
       { key: 'links', label: '链接（谷歌学术 / GitHub / 领英等）', type: 'links' }
     ],
     renderHTML: headerRender

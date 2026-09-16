@@ -15,6 +15,13 @@ function linkRowHTML(l, i) {
     + '<span class="blk-btn del" data-act="rmlink" data-i="' + i + '" title="删除">✕</span>'
     + '</div>';
 }
+// 照片字段的内部 HTML：缩略图（或空态）+ 选择/清除按钮。fieldHTML 与 renderPhotoField 共用。
+function photoFieldInner(v) {
+  const ok = isValidPhotoDataURL(v);
+  return (ok ? '<img class="photo-thumb" src="' + v + '" alt="">' : '<span class="photo-empty">未选择照片</span>')
+    + '<button class="btn small" data-act="pick-photo">选择图片</button>'
+    + (ok ? '<button class="btn small" data-act="clear-photo">清除</button>' : '');
+}
 function fieldHTML(b, f) {
   const val = b.data[f.key];
   const v = val == null ? '' : val;
@@ -45,6 +52,9 @@ function fieldHTML(b, f) {
       const opts = (f.options || []).map(o => '<option value="' + escapeHTML(o.v) + '"' + (o.v === v ? ' selected' : '') + '>' + escapeHTML(o.l) + '</option>').join('');
       return '<div class="field" data-key="' + f.key + '"><label>' + f.label + '</label><select data-field="' + f.key + '">' + opts + '</select></div>';
     }
+    case 'photo':
+      return '<div class="field" data-key="' + f.key + '"><label>' + f.label + '</label>'
+        + '<div class="photo-field">' + photoFieldInner(v) + '</div></div>';
   }
   return '';
 }
@@ -150,6 +160,17 @@ function removeLinkRow(id, i) {
   const links = (b.data.links || []).filter((_, j) => j !== i);
   store.setField(id, 'links', links);
   renderLinkRows(id);
+}
+
+/* ---- 照片字段刷新 ----
+   setField 发的是 'data' 事件，renderEditor 只在 'structure' 时重建，
+   所以照片变化后要手动重写缩略图 DOM（同 renderLinkRows / renderBulletRows 的做法）。 */
+function renderPhotoField(id) {
+  const b = store.state.blocks.find(x => x.id === id);
+  const card = document.querySelector('.block-card[data-block-id="' + id + '"]');
+  if (!b || !card) return;
+  const wrap = card.querySelector('.photo-field');
+  if (wrap) wrap.innerHTML = photoFieldInner(b.data.photo);
 }
 
 /* ---- bullets 行编辑器（每个项目符号一行输入框，类似添加链接） ---- */
