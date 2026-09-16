@@ -15,6 +15,14 @@ function linkRowHTML(l, i) {
     + '<span class="blk-btn del" data-act="rmlink" data-i="' + i + '" title="删除">✕</span>'
     + '</div>';
 }
+// 自定义信息行：结构照抄 linkRowHTML（名称 + 内容 + ✕），只是把 select/url 换成两个 text
+function detailRowHTML(x, i) {
+  return '<div class="detail-row">'
+    + '<input type="text" data-dt="label" data-i="' + i + '" value="' + escapeHTML(x.label || '') + '" placeholder="名称，如 籍贯">'
+    + '<input type="text" data-dt="value" data-i="' + i + '" value="' + escapeHTML(x.value || '') + '" placeholder="内容，如 江苏">'
+    + '<span class="blk-btn del" data-act="rmdetail" data-i="' + i + '" title="删除">✕</span>'
+    + '</div>';
+}
 // 照片字段的内部 HTML：缩略图（或空态）+ 选择/清除按钮。fieldHTML 与 renderPhotoField 共用。
 function photoFieldInner(v) {
   const ok = isValidPhotoDataURL(v);
@@ -51,6 +59,10 @@ function fieldHTML(b, f) {
     case 'select': {
       const opts = (f.options || []).map(o => '<option value="' + escapeHTML(o.v) + '"' + (o.v === v ? ' selected' : '') + '>' + escapeHTML(o.l) + '</option>').join('');
       return '<div class="field" data-key="' + f.key + '"><label>' + f.label + '</label><select data-field="' + f.key + '">' + opts + '</select></div>';
+    }
+    case 'details': {
+      const rows = (v || []).map((x, i) => detailRowHTML(x, i)).join('');
+      return '<div class="field" data-key="' + f.key + '"><label>' + f.label + '</label><div class="details">' + rows + '</div><button class="btn small" data-act="adddetail">+ 添加信息</button></div>';
     }
     case 'photo':
       return '<div class="field" data-key="' + f.key + '"><label>' + f.label + '</label>'
@@ -160,6 +172,37 @@ function removeLinkRow(id, i) {
   const links = (b.data.links || []).filter((_, j) => j !== i);
   store.setField(id, 'links', links);
   renderLinkRows(id);
+}
+
+/* ---- 自定义信息行编辑器（结构同 addLinkRow / removeLinkRow） ---- */
+function renderDetailRows(id) {
+  const b = store.state.blocks.find(x => x.id === id);
+  const card = document.querySelector('.block-card[data-block-id="' + id + '"]');
+  if (!b || !card) return;
+  const wrap = card.querySelector('.details');
+  if (wrap) wrap.innerHTML = (b.data.details || []).map((x, i) => detailRowHTML(x, i)).join('');
+}
+function updateDetail(id, i, k, val) {
+  const b = store.state.blocks.find(x => x.id === id);
+  if (!b) return;
+  const arr = [...(b.data.details || [])];
+  if (!arr[i]) return;
+  arr[i][k] = val;
+  store.setField(id, 'details', arr);
+}
+function addDetailRow(id) {
+  const b = store.state.blocks.find(x => x.id === id);
+  if (!b) return;
+  const arr = [...(b.data.details || []), { id: uid('d'), label: '', value: '' }];
+  store.setField(id, 'details', arr);
+  renderDetailRows(id);
+}
+function removeDetailRow(id, i) {
+  const b = store.state.blocks.find(x => x.id === id);
+  if (!b) return;
+  const arr = (b.data.details || []).filter((_, j) => j !== i);
+  store.setField(id, 'details', arr);
+  renderDetailRows(id);
 }
 
 /* ---- 照片字段刷新 ----

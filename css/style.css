@@ -105,6 +105,9 @@ body {
 .links { display: flex; flex-direction: column; gap: 6px; }
 .link-row { display: grid; grid-template-columns: 110px 1fr 1fr auto; gap: 6px; align-items: center; }
 .link-row select, .link-row input { padding: 4px 6px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; }
+.details { display: flex; flex-direction: column; gap: 6px; }
+.detail-row { display: grid; grid-template-columns: 110px 1fr auto; gap: 6px; align-items: center; } /* 首列 110px 对齐 link-row 的 select */
+.detail-row input { padding: 4px 6px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; }
 .bullets { display: flex; flex-direction: column; gap: 8px; }
 .bullet-row { position: relative; }
 .bullet-row textarea { padding-right: 30px; } /* 继承 .field textarea 样式（个人简介同款），预留 ✕ 空间 */
@@ -148,6 +151,9 @@ body {
 .page h1, .page h2, .page h3 { font-family: var(--head-font); color: var(--accent); margin: 0; }
 .page h1 { font-size: 19pt; margin-bottom: 2px; letter-spacing: .01em; }
 .page .cv-title { font-size: 11.5pt; color: #444; margin-bottom: 6px; }
+/* 自定义信息（籍贯 / 政治面貌…）：流式排列；white-space:nowrap 保证整项一起换行，不在「名称：内容」中间断开 */
+.page .cv-details { display: flex; flex-wrap: wrap; gap: 2px 14px; font-size: 9.5pt; color: #333; margin-bottom: 4px; }
+.page .cv-details .dt { white-space: nowrap; }
 .page .cv-contact { display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: 9.5pt; color: #333; }
 .page .cv-contact a, .page .cv-contact span { display: inline-flex; align-items: center; gap: 4px; color: inherit; }
 .page .cv-contact a { text-decoration: none; }

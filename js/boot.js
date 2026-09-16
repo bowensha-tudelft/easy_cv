@@ -43,6 +43,12 @@ function bindEvents() {
       updateLink(id, +el.dataset.i, el.dataset.lk, el.value);
       return;
     }
+    if (el.matches('[data-dt]')) {
+      const card = el.closest('.block-card');
+      const id = card.dataset.blockId;
+      updateDetail(id, +el.dataset.i, el.dataset.dt, el.value);
+      return;
+    }
     if (el.matches('[data-bl]')) {
       const card = el.closest('.block-card');
       const id = card.dataset.blockId;
@@ -96,6 +102,8 @@ function bindEvents() {
       }
       case 'addlink': addLinkRow(id); break;
       case 'rmlink': removeLinkRow(id, +p.dataset.i); break;
+      case 'adddetail': addDetailRow(id); break;
+      case 'rmdetail': removeDetailRow(id, +p.dataset.i); break;
       case 'pick-photo': photoTargetBlockId = id; $('#photo-file').click(); break;
       // 清除照片不改变 showPhoto：「我要放照片」的意图没变，只是素材没了 → 回到虚线框
       case 'clear-photo': store.setField(id, 'photo', ''); renderPhotoField(id); break;

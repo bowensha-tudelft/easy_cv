@@ -10,13 +10,22 @@ function headerRender(b, ctx) {
   const links = (d.links || []).filter(l => l.url)
     .map(l => '<a class="cv-link" href="' + esc(l.url) + '" target="_blank" rel="noopener">' + ctx.icon(l.icon) + esc(l.label || ICON_LABELS[l.icon] || 'Link') + '</a>')
     .join('');
+  // 自定义信息（如「籍贯：江苏」）：流式排列，整项不拆行。
+  // 先 trim 再过滤 —— 否则纯空白条目会渲染出一个空的 .cv-details 行。
+  const details = (d.details || [])
+    .map(x => ({ k: String((x && x.label) || '').trim(), v: String((x && x.value) || '').trim() }))
+    .filter(x => x.k || x.v)
+    .map(x => '<span class="dt">' + (x.k && x.v ? esc(x.k) + ctx.colon + esc(x.v) : esc(x.k || x.v)) + '</span>')
+    .join('');
   const body = (d.name ? '<h1>' + esc(d.name) + '</h1>' : '')
     + (d.title ? '<div class="cv-title">' + esc(d.title) + '</div>' : '')
+    + (details ? '<div class="cv-details">' + details + '</div>' : '')
     + (contact.length ? '<div class="cv-contact">' + contact.join('') + '</div>' : '')
     + (links ? '<div class="cv-links">' + links + '</div>' : '')
     + (d.summary ? '<p class="cv-summary">' + ctx.inline(d.summary) + '</p>' : '');
 
-  // 未勾选「显示照片」：与加照片功能之前完全一致（同一条拼接路径，不是靠 CSS 恰好没变化）
+  // 未勾选「显示照片」：不进入两列布局，走与没有照片功能时同一条拼接路径
+  //（不是靠 CSS 恰好没变化）。body 里各字段仍各自按「有没有内容」决定是否输出。
   if (!d.showPhoto) return '<header class="cv-header">' + body + '</header>';
 
   // photo 经校验后直接插入，不做 escapeHTML：base64 字母表是 A-Za-z0-9+/=，
@@ -97,10 +106,11 @@ const SECTION_TITLES = {
 const BLOCK_TYPES = {
   header: {
     key: 'header', label: '个人信息', icon: 'user', sectionTitle: null,
-    defaults: () => ({ name: '', title: '', email: '', phone: '', location: '', summary: '', links: [], showPhoto: false, photo: '' }),
+    defaults: () => ({ name: '', title: '', details: [], email: '', phone: '', location: '', summary: '', links: [], showPhoto: false, photo: '' }),
     fields: [
       { key: 'name', label: '姓名', type: 'text' },
       { key: 'title', label: '职位 / 头衔', type: 'text' },
+      { key: 'details', label: '自定义信息（如 籍贯 / 政治面貌）', type: 'details' },
       { key: 'email', label: '邮箱', type: 'email' },
       { key: 'phone', label: '电话', type: 'text' },
       { key: 'location', label: '所在地', type: 'text' },

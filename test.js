@@ -315,6 +315,63 @@ const tests = `
   renderPreview(store.state);
   assert(els['#preview-pane'].innerHTML.includes('cv-photo-empty'), '清除照片后预览回到虚线占位框');
 
+  // 13. 自定义信息（籍贯 / 政治面貌…）
+  const zhCtx = Object.assign({}, tctx, { lang: 'zh', colon: '：', list: '，' });
+
+  // 13a. 位置：名 → 头衔 → 自定义信息 → 联系方式
+  const dH = headerRender({ data: { name: 'N', title: 'T', details: [{ label: '籍贯', value: '江苏' }], email: 'e@x.com' } }, zhCtx);
+  const iT = dH.indexOf('cv-title'), iD = dH.indexOf('cv-details'), iC = dH.indexOf('cv-contact');
+  assert(iT > -1 && iD > iT && iC > iD, '顺序：头衔 → 自定义信息 → 联系方式');
+  assert(dH.includes('<span class="dt">籍贯：江苏</span>'), '渲染为「名称：内容」');
+  assert(!dH.includes('has-photo'), '没勾照片时仍是单列 header');
+
+  // 13b. 冒号跟随语言（复用 ctx.colon，与技能行规则一致）
+  assert(headerRender({ data: { details: [{ label: 'Hometown', value: 'Jiangsu' }] } }, tctx)
+    .includes('<span class="dt">Hometown: Jiangsu</span>'), '英文用 ": " 冒号');
+
+  // 13c. 只填一半也照常渲染
+  assert(headerRender({ data: { details: [{ label: '党员', value: '' }] } }, zhCtx).includes('<span class="dt">党员</span>'),
+    '只有名称：不补冒号，只渲染名称');
+  assert(headerRender({ data: { details: [{ label: '', value: '江苏' }] } }, zhCtx).includes('<span class="dt">江苏</span>'),
+    '只有内容：只渲染内容');
+
+  // 13d. 无内容时不产生 cv-details（保证没填过时输出与改动前一致）
+  assert(!headerRender({ data: { name: 'N', title: 'T', summary: 'S' } }, tctx).includes('cv-details'), '无 details 键：不渲染');
+  assert(!headerRender({ data: { details: [] } }, tctx).includes('cv-details'), '空数组：不渲染');
+  assert(!headerRender({ data: { details: [{ label: '', value: '' }] } }, tctx).includes('cv-details'), '全空条目：不渲染');
+  assert(!headerRender({ data: { details: [{ label: '   ', value: '  ' }] } }, tctx).includes('cv-details'), '纯空白条目：不渲染');
+  assert(!headerRender({ data: { details: [null] } }, tctx).includes('cv-details'), 'null 条目：不炸且不渲染');
+
+  // 13e. 转义：手改 JSON 塞进的标签必须被转义
+  const escD = headerRender({ data: { details: [{ label: '<b>x</b>', value: '<img src=x onerror=1>' }] } }, tctx);
+  assert(escD.includes('&lt;b&gt;x&lt;/b&gt;') && !escD.includes('<b>x</b>'), '名称被转义');
+  assert(!escD.includes('<img'), '内容里的标签被转义');
+
+  // 13f. 编辑器：行结构与 links 同构（两个输入框 + ✕），另有「+ 添加信息」
+  const dtField = BLOCK_TYPES.header.fields.find(f => f.key === 'details');
+  const dtHTML = fieldHTML({ data: { details: [{ label: '籍贯', value: '江苏' }] } }, dtField);
+  assert(dtHTML.includes('data-dt="label"') && dtHTML.includes('data-dt="value"'), '每行是 名称 + 内容 两个输入框');
+  assert(dtHTML.includes('data-act="rmdetail"') && dtHTML.includes('data-act="adddetail"'), '有删除 ✕ 与「+ 添加信息」');
+  assert(dtHTML.includes('value="籍贯"') && dtHTML.includes('value="江苏"'), '已填内容回填到输入框');
+  assert(dtHTML.includes('class="detail-row"') && dtHTML.includes('class="details"'), 'DOM 结构同 links');
+
+  // 13g. store：增 / 改 / 删
+  store.setState(deepClone(SAMPLE));
+  const dHdr = store.state.blocks.find(b => b.type === 'header');
+  addDetailRow(dHdr.id);
+  assert(store.state.blocks.find(b => b.id === dHdr.id).data.details.length === 1, 'addDetailRow 追加一行');
+  updateDetail(dHdr.id, 0, 'label', '政治面貌');
+  updateDetail(dHdr.id, 0, 'value', '党员');
+  assert(store.state.blocks.find(b => b.id === dHdr.id).data.details[0].label === '政治面貌', 'updateDetail 改名称');
+  store.setLanguage('zh');
+  renderPreview(store.state);
+  assert(els['#preview-pane'].innerHTML.includes('政治面貌：党员'), '改完预览即时反映（中文冒号）');
+  removeDetailRow(dHdr.id, 0);
+  assert(store.state.blocks.find(b => b.id === dHdr.id).data.details.length === 0, 'removeDetailRow 删除一行');
+
+  // 13h. 新增 header 块默认带空 details 数组
+  assert(Array.isArray(BLOCK_TYPES.header.defaults().details), 'header defaults 含 details 数组');
+
   console.log('ALL SMOKE TESTS PASSED ✅  (' + store.state.blocks.length + ' blocks)');
 })().catch(e => { console.error('FAIL ❌'); console.error(e.stack || e); process.exit(1); });
 `;

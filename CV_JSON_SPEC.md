@@ -57,7 +57,7 @@
 
 ## 3. 块类型与 `data` 字段
 
-字段类型说明：`text`=字符串；`month`=`"YYYY-MM"` 字符串（可空）；`textarea`=字符串（可含换行）；`bullets`=字符串数组（一项一条）；`tags`=字符串数组（chip，回车添加）；`list`=字符串数组（编辑器里每行一条可编辑）；`checkbox`=布尔；`links`=对象数组（见 header）；`photo`=图片 data URL 字符串（见 header）；`select`=固定枚举。
+字段类型说明：`text`=字符串；`month`=`"YYYY-MM"` 字符串（可空）；`textarea`=字符串（可含换行）；`bullets`=字符串数组（一项一条）；`tags`=字符串数组（chip，回车添加）；`list`=字符串数组（编辑器里每行一条可编辑）；`checkbox`=布尔；`links`=对象数组（见 header）；`details`=对象数组（见 header）；`photo`=图片 data URL 字符串（见 header）；`select`=固定枚举。
 
 ### 3.1 `header` —— 个人信息（渲染在顶部，无小节标题）
 
@@ -65,6 +65,7 @@
 |---|---|---|---|
 | `name` | text | 姓名 | `"林晓 (Xiao Lin)"` |
 | `title` | text | 职位/头衔 | `"ML Engineer"` |
+| `details` | details | 自定义键值信息（籍贯 / 政治面貌…），自由 DIY | 见下 |
 | `email` | text | 邮箱 | `"x@example.com"` |
 | `phone` | text | 电话 | `"+86 139 0000 0000"` |
 | `location` | text | 所在地 | `"Shanghai, China"` |
@@ -86,6 +87,21 @@
 - 渲染尺寸固定 30mm × 40mm（3:4），用 `object-fit: cover` 居中裁切，所以**非 3:4 的照片不会失真，但边缘会被裁掉**。竖版 3:4 效果最佳
 - 照片是自包含的 base64，**不要写文件路径**：本应用以 `file://` 双击运行为目标，路径在跨浏览器 / 跨机器时不可用
 - AI / agent 通常不必读 `photo` 的值（很长）。要移除照片就把 `photo` 设为 `""`；要连占位框一起关掉，再把 `showPhoto` 设为 `false`
+
+**自定义信息（`details`）** —— 自由键值对，渲染在**头衔之后、联系方式之前**：
+
+```json
+"details": [
+  { "id": "d_a1", "label": "籍贯", "value": "江苏" },
+  { "id": "d_a2", "label": "政治面貌", "value": "党员" }
+]
+```
+
+- **没有内置类型** —— `label` 完全由用户自己填，不要预设「籍贯 / 政治面貌」这类枚举
+- 渲染为 `名称：内容`，冒号跟随 `meta.language`（`zh`→`：`，`en`→`: `，与技能行同一套规则）
+- **只填一半也正常**：只有 `label` 就只显示名称，只有 `value` 就只显示内容
+- **空条目会被跳过**：`label` 与 `value` 都为空（含纯空白）的条目完全不渲染；整个数组都空时**不产生任何输出**，版面与没有此字段时一致
+- 排版是流式的（`flex-wrap`），宽度不够时**整条一起换行**，不会在「名称：内容」中间断开。有照片时正文栏只有 142mm，条目多时注意这点
 
 `links` 每项：
 
@@ -243,6 +259,7 @@ Patch 的**路径根是应用 JSON 对象本身**，一次提交一个 patch 数
 - **custom 标题合并**：连续多个 `custom` 块的 `title` 相同时，只渲染**一个**小节标题，其下依次列出各块内容（适合把多个同类条目放一个标题下）；`title` 不同或中间隔着其他类型时，各自独立出标题。空 `title` 不渲染标题。
 - **日期显示**：由 `meta.dateFormat` 决定 `Jun 2022` 或 `2022-06`；`current=true` 显示 `开始 – Present`（`meta.language="zh"` 时为 `开始 – 至今`）。
 - **中英标点**：`meta.language="zh"` 时，自动拼接用中文标点——技能/项目列表用 `：` 和 `，`（英文为 `: ` 和 `, `）；教育学位不加 "in"（如 `博士 机械工程`，英文为 `PhD in Mechanical Engineering`）。这些是渲染器拼的，数据里不要自己加标点。
+- **自定义信息**：`details` 渲染在头衔与联系方式之间，流式排列（`flex-wrap`），每条 `名称：内容` 用 `white-space: nowrap` 保证整条不被拆行；空条目直接跳过，全空时不输出任何 DOM。
 - **照片**：`showPhoto=true` 时 header 变为两列 —— 正文在左，30×40mm 照片框在右上角（3:4，`object-fit: cover`）；`showPhoto=true` 但 `photo` 为空时右上角渲染**会打印出来的**虚线占位框；`showPhoto` 为假（含老数据缺该键）时 header 版面与没有照片功能时**逐字节一致**。
 - `visible:false` 的块在预览/打印中隐藏。
 - 顺序即文档顺序：header 建议放最前；想让某小节出现在别的类型之间，就调整 `blocks` 数组顺序。
