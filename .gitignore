@@ -9,3 +9,5 @@ BowenSha*.json
 BowenSha*.pdf
 CV_BowenSha*.pdf
 CV_*.pdf
+# 本地测试用图片（测照片功能随手拿的，不入库；任何图片都能当素材）
+elysia.jpg
