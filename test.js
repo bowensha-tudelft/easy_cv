@@ -372,6 +372,35 @@ const tests = `
   // 13h. 新增 header 块默认带空 details 数组
   assert(Array.isArray(BLOCK_TYPES.header.defaults().details), 'header defaults 含 details 数组');
 
+  // 14. markdown 加粗：所有自由文本字段都支持 **加粗**
+  assert(headerRender({ data: { details: [{ label: '**籍贯**', value: '江苏' }] } }, tctx)
+    .includes('<span class="dt"><strong>籍贯</strong>: 江苏</span>'), '自定义信息-名称支持加粗');
+  assert(headerRender({ data: { details: [{ label: '籍贯', value: '**江苏**' }] } }, tctx)
+    .includes('<span class="dt">籍贯: <strong>江苏</strong></span>'), '自定义信息-内容支持加粗');
+  assert(headerRender({ data: { name: '**张三**' } }, tctx).includes('<h1><strong>张三</strong></h1>'), '姓名支持加粗');
+  assert(headerRender({ data: { title: '**工程师**' } }, tctx).includes('<strong>工程师</strong>'), '头衔支持加粗');
+  assert(headerRender({ data: { name: 'N', location: '**上海**' } }, tctx).includes('<strong>上海</strong>'), '所在地支持加粗');
+
+  const skHtml = skillsRender({ data: { name: '**Lang**', keywords: ['**Python**'] } }, tctx);
+  assert(skHtml.includes('<strong>Lang</strong>') && skHtml.includes('<strong>Python</strong>'), '技能组名与技能项支持加粗');
+
+  const edHtml = educationRender({ data: { institution: '**MIT**', degree: 'PhD', area: '**Chem**' } }, tctx);
+  assert(edHtml.includes('<strong>MIT</strong>') && edHtml.includes('<strong>Chem</strong>'), '学校与专业支持加粗');
+
+  const exHtml = experienceRender({ data: { position: '**RA**', organization: '**Lab**' } }, tctx);
+  assert(exHtml.includes('<strong>RA</strong>') && exHtml.includes('<strong>Lab</strong>'), '职位与机构支持加粗');
+
+  // 14b. URL 属性值不套 markdown（往 href 里塞 <strong> 没有意义）
+  const urlHtml = headerRender({ data: { name: 'N', links: [{ icon: 'github', label: 'GH', url: 'https://example.com/**a**' }] } }, tctx);
+  assert(urlHtml.includes('href="https://example.com/**a**"'), 'href 保持字面量');
+  assert(!urlHtml.includes('href="https://example.com/<strong>'), 'href 里不会出现 <strong>');
+
+  // 14c. 加粗没有放松转义：** 之外的标签仍被转义，只有 strong 是「真的」
+  const safeHtml = headerRender({ data: { name: '**<img src=x>**' } }, tctx);
+  assert(safeHtml.includes('<strong>&lt;img src=x&gt;</strong>'), '** 内的标签被转义，只有 strong 生效');
+  assert(!safeHtml.includes('<img'), '不产生真实的 img 标签');
+  assert(!headerRender({ data: { name: '<b>x</b>' } }, tctx).includes('<b>x</b>'), '不加 ** 时标签照旧被转义');
+
   console.log('ALL SMOKE TESTS PASSED ✅  (' + store.state.blocks.length + ' blocks)');
 })().catch(e => { console.error('FAIL ❌'); console.error(e.stack || e); process.exit(1); });
 `;

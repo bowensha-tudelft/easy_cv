@@ -4,21 +4,23 @@
 function headerRender(b, ctx) {
   const d = b.data, esc = ctx.esc;
   const contact = [];
-  if (d.email) contact.push('<a href="mailto:' + esc(d.email) + '">' + ctx.icon('email') + esc(d.email) + '</a>');
-  if (d.phone) contact.push('<span>' + ctx.icon('phone') + esc(d.phone) + '</span>');
-  if (d.location) contact.push('<span>' + ctx.icon('location') + esc(d.location) + '</span>');
+  // 约定：显示文字用 ctx.inline（先转义再套 **加粗**，是 esc 的严格超集）；
+  //       href / src 这类属性值仍用 esc —— 往 URL 里塞 <strong> 没有意义。
+  if (d.email) contact.push('<a href="mailto:' + esc(d.email) + '">' + ctx.icon('email') + ctx.inline(d.email) + '</a>');
+  if (d.phone) contact.push('<span>' + ctx.icon('phone') + ctx.inline(d.phone) + '</span>');
+  if (d.location) contact.push('<span>' + ctx.icon('location') + ctx.inline(d.location) + '</span>');
   const links = (d.links || []).filter(l => l.url)
-    .map(l => '<a class="cv-link" href="' + esc(l.url) + '" target="_blank" rel="noopener">' + ctx.icon(l.icon) + esc(l.label || ICON_LABELS[l.icon] || 'Link') + '</a>')
+    .map(l => '<a class="cv-link" href="' + esc(l.url) + '" target="_blank" rel="noopener">' + ctx.icon(l.icon) + ctx.inline(l.label || ICON_LABELS[l.icon] || 'Link') + '</a>')
     .join('');
   // 自定义信息（如「籍贯：江苏」）：流式排列，整项不拆行。
   // 先 trim 再过滤 —— 否则纯空白条目会渲染出一个空的 .cv-details 行。
   const details = (d.details || [])
     .map(x => ({ k: String((x && x.label) || '').trim(), v: String((x && x.value) || '').trim() }))
     .filter(x => x.k || x.v)
-    .map(x => '<span class="dt">' + (x.k && x.v ? esc(x.k) + ctx.colon + esc(x.v) : esc(x.k || x.v)) + '</span>')
+    .map(x => '<span class="dt">' + (x.k && x.v ? ctx.inline(x.k) + ctx.colon + ctx.inline(x.v) : ctx.inline(x.k || x.v)) + '</span>')
     .join('');
-  const body = (d.name ? '<h1>' + esc(d.name) + '</h1>' : '')
-    + (d.title ? '<div class="cv-title">' + esc(d.title) + '</div>' : '')
+  const body = (d.name ? '<h1>' + ctx.inline(d.name) + '</h1>' : '')
+    + (d.title ? '<div class="cv-title">' + ctx.inline(d.title) + '</div>' : '')
     + (details ? '<div class="cv-details">' + details + '</div>' : '')
     + (contact.length ? '<div class="cv-contact">' + contact.join('') + '</div>' : '')
     + (links ? '<div class="cv-links">' + links + '</div>' : '')
@@ -39,7 +41,7 @@ function headerRender(b, ctx) {
     + '</header>';
 }
 function educationRender(b, ctx) {
-  const d = b.data, esc = ctx.esc;
+  const d = b.data;   // 本函数所有字段都是显示文字，统一走 ctx.inline（内含转义）
   // 英文用 "PhD in Mechanical Engineering"；中文不用 in，直接拼接
   const head = ctx.lang === 'zh'
     ? [d.degree, d.area].filter(Boolean).join(' ')
@@ -48,12 +50,12 @@ function educationRender(b, ctx) {
   const hs = (d.highlights || []).filter(Boolean);
   return '<div class="entry">'
     + '<div class="entry-head">'
-    + (head ? '<h3>' + esc(head) + '</h3>' : '')
+    + (head ? '<h3>' + ctx.inline(head) + '</h3>' : '')
     + '<div class="dates">' + ctx.range(d.startDate, d.endDate, d.current) + '</div>'
     + '</div>'
-    + (org ? '<div class="org">' + esc(org) + '</div>' : '')
-    + (d.score ? '<p class="score">GPA' + ctx.colon + esc(d.score) + '</p>' : '')
-    + ((d.courses || []).length ? '<div class="tags-line">' + d.courses.map(c => '<span class="ptag">' + esc(c) + '</span>').join('') + '</div>' : '')
+    + (org ? '<div class="org">' + ctx.inline(org) + '</div>' : '')
+    + (d.score ? '<p class="score">GPA' + ctx.colon + ctx.inline(d.score) + '</p>' : '')
+    + ((d.courses || []).length ? '<div class="tags-line">' + d.courses.map(c => '<span class="ptag">' + ctx.inline(c) + '</span>').join('') + '</div>' : '')
     + (hs.length ? '<ul>' + hs.map(h => '<li>' + ctx.inline(h) + '</li>').join('') + '</ul>' : '')
     + '</div>';
 }
@@ -63,10 +65,10 @@ function experienceRender(b, ctx) {
   const hs = (d.highlights || []).filter(Boolean);
   return '<div class="entry">'
     + '<div class="entry-head">'
-    + (d.position ? '<h3>' + esc(d.position) + '</h3>' : '')
+    + (d.position ? '<h3>' + ctx.inline(d.position) + '</h3>' : '')
     + '<div class="dates">' + ctx.range(d.startDate, d.endDate, d.current) + '</div>'
     + '</div>'
-    + (org ? '<div class="org">' + esc(org) + (d.url ? ' · <a href="' + esc(d.url) + '" target="_blank" rel="noopener">' + esc(d.url) + '</a>' : '') + '</div>' : '')
+    + (org ? '<div class="org">' + ctx.inline(org) + (d.url ? ' · <a href="' + esc(d.url) + '" target="_blank" rel="noopener">' + esc(d.url) + '</a>' : '') + '</div>' : '')
     + (d.summary ? '<p>' + ctx.inline(d.summary) + '</p>' : '')
     + (hs.length ? '<ul>' + hs.map(h => '<li>' + ctx.inline(h) + '</li>').join('') + '</ul>' : '')
     + '</div>';
@@ -76,20 +78,20 @@ function projectsRender(b, ctx) {
   const hs = (d.highlights || []).filter(Boolean);
   return '<div class="entry">'
     + '<div class="entry-head">'
-    + (d.name ? '<h3>' + esc(d.name) + '</h3>' : '')
+    + (d.name ? '<h3>' + ctx.inline(d.name) + '</h3>' : '')
     + '<div class="dates">' + ctx.range(d.startDate, d.endDate, d.current) + '</div>'
     + '</div>'
-    + ((d.roles || []).length ? '<div class="org">' + d.roles.map(esc).join(ctx.list) + '</div>' : '')
+    + ((d.roles || []).length ? '<div class="org">' + d.roles.map(ctx.inline).join(ctx.list) + '</div>' : '')
     + (d.description ? '<p>' + ctx.inline(d.description) + '</p>' : '')
     + (d.url ? '<div class="org"><a href="' + esc(d.url) + '" target="_blank" rel="noopener">' + esc(d.url) + '</a></div>' : '')
-    + ((d.keywords || []).length ? '<div class="tags-line">' + d.keywords.map(k => '<span class="ptag">' + esc(k) + '</span>').join('') + '</div>' : '')
+    + ((d.keywords || []).length ? '<div class="tags-line">' + d.keywords.map(k => '<span class="ptag">' + ctx.inline(k) + '</span>').join('') + '</div>' : '')
     + (hs.length ? '<ul>' + hs.map(h => '<li>' + ctx.inline(h) + '</li>').join('') + '</ul>' : '')
     + '</div>';
 }
 function skillsRender(b, ctx) {
-  const d = b.data, esc = ctx.esc;
-  return '<div class="skill-row"><span class="skill-name">' + esc(d.name) + '</span>'
-    + ((d.keywords || []).length ? ctx.colon + d.keywords.map(esc).join(ctx.list) : '')
+  const d = b.data;   // 同 educationRender：全是显示文字，走 ctx.inline
+  return '<div class="skill-row"><span class="skill-name">' + ctx.inline(d.name) + '</span>'
+    + ((d.keywords || []).length ? ctx.colon + d.keywords.map(ctx.inline).join(ctx.list) : '')
     + '</div>';
 }
 function customRender(b, ctx) {
