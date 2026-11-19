@@ -113,6 +113,7 @@
 ```
 easy_cv/
 ├── index.html          入口（壳 + 菜单/弹层标记 + 模块加载）
+├── LICENSE             MIT 许可证
 ├── css/style.css       全部样式（含 @media print 打印样式）
 ├── js/
 │   ├── utils.js        工具函数 + 内联 SVG 图标
@@ -153,3 +154,7 @@ easy_cv/
 - **打印保真**：多页时用 `@page` 边距而不是元素 padding，第 2 页起边距正常
 - **ATS 解析**：单栏、真实文本、标准标题，ATS 友好
 - **中文**：预览/打印用系统字体（Windows 微软雅黑 / 宋体），免费支持，无需打包字体
+
+## 许可证
+
+[MIT](LICENSE) © 2026 Bowen Sha
